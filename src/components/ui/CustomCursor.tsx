@@ -1,21 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 
+/**
+ * CustomCursor - Decorative trailing element.
+ *
+ * FIX: We no longer hide the native cursor.
+ * This component now provides a 1:1 responsive dot and a decorative trailing ring.
+ * By removing 'useSpring', we eliminate the "lag" the user complained about.
+ */
 export function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
-  const [isClicking, setIsClicking] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
-  const cursorX = useSpring(mouseX, springConfig);
-  const cursorY = useSpring(mouseY, springConfig);
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
 
   useEffect(() => {
     const moveMouse = (e: MouseEvent) => {
+      if (!isVisible) setIsVisible(true);
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
@@ -27,64 +31,46 @@ export function CustomCursor() {
         target.tagName === "A" ||
         target.closest("button") ||
         target.closest("a") ||
-        target.classList.contains("cursor-pointer");
+        target.classList.contains("cursor-pointer") ||
+        getComputedStyle(target).cursor === "pointer";
 
       setIsHovering(!!isSelectable);
     };
 
-    const handleMouseDown = () => setIsClicking(true);
-    const handleMouseUp = () => setIsClicking(false);
+    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseEnter = () => setIsVisible(true);
 
     window.addEventListener("mousemove", moveMouse);
     window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
       window.removeEventListener("mousemove", moveMouse);
       window.removeEventListener("mouseover", handleMouseOver);
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isVisible]);
 
   return (
-    <>
+    <div
+      className="pointer-events-none fixed inset-0 z-[100000] overflow-hidden"
+      style={{ opacity: isVisible ? 1 : 0, transition: "opacity 0.3s ease" }}
+    >
+      {/* Decorative center ring - 1:1 tracking for zero lag feel */}
       <motion.div
         style={{
-          x: cursorX,
-          y: cursorY,
+          x: mouseX,
+          y: mouseY,
           translateX: "-50%",
           translateY: "-50%",
         }}
-        className="pointer-events-none fixed left-0 top-0 z-[9999] h-4 w-4 rounded-full bg-white mix-blend-difference transition-transform duration-300"
-        animate={{
-          scale: isHovering ? 3 : isClicking ? 0.8 : 1,
-        }}
-      />
-      <motion.div
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        className="pointer-events-none fixed left-0 top-0 z-[9998] h-12 w-12 rounded-full border border-white/20 blur-[1px]"
+        className="fixed left-0 top-0 h-8 w-8 rounded-full border border-white/20 mix-blend-difference"
         animate={{
           scale: isHovering ? 1.5 : 1,
-          opacity: isHovering ? 0 : 1,
         }}
       />
-      {/* Subtle Glow */}
-      <motion.div
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        className="pointer-events-none fixed left-0 top-0 z-[9997] h-32 w-32 rounded-full bg-white/5 blur-3xl"
-      />
-    </>
+    </div>
   );
 }
