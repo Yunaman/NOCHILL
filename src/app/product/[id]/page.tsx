@@ -3,7 +3,6 @@
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useLenis } from "@/hooks/useLenis";
 import { PRODUCTS } from "@/lib/data";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ArrowLeft } from "lucide-react";
@@ -12,7 +11,6 @@ import { useState } from "react";
 import { fadeIn } from "@/lib/animations";
 
 export default function ProductPage() {
-  useLenis();
   const params = useParams();
   const product = PRODUCTS.find((p) => p.id === params.id);
   const [selectedSize, setSelectedSize] = useState<string>("");

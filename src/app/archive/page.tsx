@@ -8,8 +8,8 @@ const ARCHIVE_ITEMS = [
   { id: 2, name: "Sample 02", year: "2021", img: "https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?q=80&w=1000" },
   { id: 3, name: "Sample 03", year: "2022", img: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000" },
   { id: 4, name: "Sample 04", year: "2022", img: "https://images.unsplash.com/photo-1554568218-0f1715e72254?q=80&w=1000" },
-  { id: 5, name: "Sample 05", year: "2023", img: "https://images.unsplash.com/photo-1571945153237-4929e783ee4a?q=80&w=1000" },
-  { id: 6, name: "Sample 06", year: "2023", img: "https://images.unsplash.com/photo-1529139572765-397392991d1f?q=80&w=1000" },
+  { id: 5, name: "Sample 05", year: "2023", img: "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?q=80&w=1000" },
+  { id: 6, name: "Sample 06", year: "2023", img: "https://images.unsplash.com/photo-1534030347209-467a5b0ad3e6?q=80&w=1000" },
 ];
 
 export default function ArchivePage() {
