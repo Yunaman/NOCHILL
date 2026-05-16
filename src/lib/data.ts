@@ -34,7 +34,7 @@ export const PRODUCTS: Product[] = [
     price: 45,
     description: "Ribbed knit beanie with chrome-finished logo plaque.",
     category: "Accessories",
-    images: ["https://images.unsplash.com/photo-1576828231591-13c1ec720ec7?q=80&w=1000"],
+    images: ["https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000"],
     details: ["Wool blend", "Removable metal plaque", "Double fold", "One size"],
   },
 ];

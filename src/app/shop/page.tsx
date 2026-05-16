@@ -1,14 +1,11 @@
 "use client";
 
-import { useLenis } from "@/hooks/useLenis";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { PRODUCTS } from "@/lib/data";
 import { motion } from "framer-motion";
 import { fadeIn, staggerContainer } from "@/lib/animations";
 
 export default function ShopPage() {
-  useLenis();
-
   return (
     <div className="min-h-screen bg-black pt-32 pb-20 px-6 md:px-12">
       <header className="mb-20">

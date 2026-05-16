@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { useLenis } from "@/hooks/useLenis";
 import { ChromeLogo } from "@/components/three/ChromeLogo";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { PRODUCTS } from "@/lib/data";
@@ -14,7 +13,6 @@ import Link from "next/link";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  useLenis();
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const philosophyRef = useRef<HTMLDivElement>(null);
@@ -156,8 +154,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-white text-black">
-        <h2 className="text-huge text-center mix-blend-difference reveal-text">ENTER THE VOID</h2>
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-zinc-100 text-black">
+        <h2 className="text-huge text-center reveal-text">ENTER THE VOID</h2>
         <Link
           href="/shop"
           className="mt-16 group relative overflow-hidden bg-black text-white px-16 py-6"
