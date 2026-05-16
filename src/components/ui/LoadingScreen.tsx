@@ -7,99 +7,93 @@ import { ChromeLogo } from "@/components/three/ChromeLogo";
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
-  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
+    // 5 second total duration
+    const totalDuration = 5000;
+    const intervalTime = 30;
+    const increment = (100 / (totalDuration / intervalTime));
+
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(timer);
-          setIsReady(true);
+          // Auto-transition after progress reaches 100%
+          setTimeout(() => setLoading(false), 500);
           return 100;
         }
-        return prev + 1;
+        return prev + increment;
       });
-    }, 30);
+    }, intervalTime);
 
     return () => clearInterval(timer);
   }, []);
-
-  const handleStart = () => {
-    setLoading(false);
-  };
 
   return (
     <AnimatePresence>
       {loading && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, pointerEvents: "none" }}
-          transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black"
+          exit={{ opacity: 0, scale: 1.1 }}
+          transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[100001] flex flex-col items-center justify-center bg-black px-6 text-center"
         >
-          <div className="absolute inset-0 opacity-20">
+          {/* Subtle 3D background */}
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
              <ChromeLogo />
           </div>
 
-          <div className="z-10 flex flex-col items-center">
-            <div className="overflow-hidden">
+          <div className="z-10 flex flex-col items-center max-w-md w-full">
+            <div className="overflow-hidden mb-12">
               <motion.h1
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] }}
-                className="text-4xl font-bold tracking-[0.3em] md:text-7xl"
+                className="text-4xl font-bold tracking-[0.5em] md:text-7xl uppercase"
               >
                 NOCHILL
               </motion.h1>
             </div>
 
-            <div className="mt-12 h-[1px] w-64 bg-white/10">
+            {/* Progress Bar Container */}
+            <div className="relative h-[2px] w-full max-w-[280px] bg-white/5 overflow-hidden">
               <motion.div
-                className="h-full bg-white"
+                className="absolute inset-y-0 left-0 bg-white"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.1 }}
+                transition={{ duration: 0.1, ease: "linear" }}
               />
             </div>
 
-            <div className="mt-8 h-20 overflow-hidden text-center">
-              <AnimatePresence mode="wait">
-                {!isReady ? (
-                  <motion.p
-                    key="loading"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -20, opacity: 0 }}
-                    className="font-mono text-[10px] uppercase tracking-widest text-white/40"
-                  >
-                    Calibrating void... {progress}%
-                  </motion.p>
-                ) : (
-                  <motion.button
-                    key="start"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    onClick={handleStart}
-                    className="group flex flex-col items-center"
-                  >
-                    <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-white">
-                      ENTER THE VOID
-                    </span>
-                    <div className="mt-2 h-px w-0 bg-white transition-all duration-500 group-hover:w-full" />
-                  </motion.button>
-                )}
-              </AnimatePresence>
+            <div className="mt-8 flex flex-col items-center gap-2">
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="font-mono text-[9px] uppercase tracking-[0.6em] text-white/30"
+              >
+                Initialising Archive
+              </motion.span>
+              <span className="font-mono text-[10px] text-white/60 tabular-nums">
+                {Math.round(progress)}%
+              </span>
             </div>
           </div>
 
+          {/* Bottom Branding */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="absolute bottom-12 text-[10px] uppercase tracking-[0.5em] text-white/20"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="absolute bottom-12 flex flex-col items-center gap-4"
           >
-            Built for the outsiders
+            <div className="h-12 w-[1px] bg-gradient-to-b from-white/20 to-transparent" />
+            <span className="text-[9px] uppercase tracking-[0.8em] text-white/20 font-bold">
+              Worldwide Signal Found
+            </span>
           </motion.div>
+
+          {/* Noise overlay specific to loader for cinematic feel */}
+          <div className="pointer-events-none absolute inset-0 z-50 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         </motion.div>
       )}
     </AnimatePresence>
