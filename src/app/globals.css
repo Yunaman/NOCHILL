@@ -15,7 +15,6 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: none; /* Hide default cursor */
   }
 
   /* Animated Grain overlay */
@@ -29,7 +28,7 @@
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
     opacity: 0.05;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 50; /* Lower than navbar and custom cursor */
     animation: grain 8s steps(10) infinite;
   }
 
@@ -40,7 +39,7 @@
     inset: 0;
     background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
     pointer-events: none;
-    z-index: 9998;
+    z-index: 40;
   }
 }
 

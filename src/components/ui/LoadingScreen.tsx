@@ -35,7 +35,7 @@ export function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, pointerEvents: "none" }}
           transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black"
+          className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black"
         >
           <div className="absolute inset-0 opacity-20">
              <ChromeLogo />
