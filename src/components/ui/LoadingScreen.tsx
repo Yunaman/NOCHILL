@@ -1,98 +1,128 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChromeLogo } from "@/components/three/ChromeLogo";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Text, Float, Environment, PerspectiveCamera, Sparkles } from "@react-three/drei";
+import * as THREE from "three";
+
+function MetallicLogo() {
+  const meshRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const t = state.clock.getElapsedTime();
+    meshRef.current.rotation.y = Math.sin(t * 0.2) * 0.1;
+    meshRef.current.position.z = Math.sin(t * 0.5) * 0.5;
+  });
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
+      <group ref={meshRef}>
+        <Text
+          fontSize={1.2}
+          letterSpacing={0.4}
+          color="white"
+        >
+          NOCHILL
+          <meshStandardMaterial
+            metalness={1}
+            roughness={0.1}
+            color="#ffffff"
+            emissive="#ffffff"
+            emissiveIntensity={0.2}
+          />
+        </Text>
+        <Text
+          position={[0, -0.8, 0]}
+          fontSize={0.2}
+          letterSpacing={0.8}
+          color="white"
+        >
+          {"// YUNA"}
+          <meshStandardMaterial
+            metalness={1}
+            roughness={0.1}
+            color="#ffffff"
+            transparent
+            opacity={0.3}
+          />
+        </Text>
+      </group>
+    </Float>
+  );
+}
+
+function Scene() {
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+      <ambientLight intensity={0.2} />
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} />
+      <Sparkles count={100} scale={10} size={1} speed={0.4} opacity={0.2} />
+      <MetallicLogo />
+      <Environment preset="night" />
+    </>
+  );
+}
 
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    // 5 second total duration
-    const totalDuration = 5000;
-    const intervalTime = 30;
-    const increment = (100 / (totalDuration / intervalTime));
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          // Auto-transition after progress reaches 100%
-          setTimeout(() => setLoading(false), 500);
-          return 100;
-        }
-        return prev + increment;
-      });
-    }, intervalTime);
+    const contentTimer = setTimeout(() => {
+      setShowContent(true);
+    }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(contentTimer);
+    };
   }, []);
 
   return (
     <AnimatePresence>
       {loading && (
         <motion.div
+          key="loading-screen"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.1 }}
-          transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[100001] flex flex-col items-center justify-center bg-black px-6 text-center"
+          exit={{ opacity: 0 }}
+          transition={{ duration: 2, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[100001] bg-black"
         >
-          {/* Subtle 3D background */}
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-             <ChromeLogo />
-          </div>
+          <div className="relative h-full w-full">
+            <Canvas shadows>
+              <Scene />
+            </Canvas>
 
-          <div className="z-10 flex flex-col items-center max-w-md w-full">
-            <div className="overflow-hidden mb-12">
-              <motion.h1
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1.5, ease: [0.76, 0, 0.24, 1] }}
-                className="text-4xl font-bold tracking-[0.5em] md:text-7xl uppercase"
-              >
-                NOCHILL
-              </motion.h1>
-            </div>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60" />
 
-            {/* Progress Bar Container */}
-            <div className="relative h-[2px] w-full max-w-[280px] bg-white/5 overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: showContent ? 1 : 0 }}
+              className="absolute bottom-24 left-1/2 w-full -translate-x-1/2 text-center"
+            >
+              <span className="text-[9px] font-bold uppercase tracking-[1em] text-white/20">
+                A Vision by Yuna // No Signal Found
+              </span>
+            </motion.div>
+
+            <div className="absolute bottom-0 left-0 h-[1px] w-full bg-white/5">
               <motion.div
-                className="absolute inset-y-0 left-0 bg-white"
+                className="h-full bg-white"
                 initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.1, ease: "linear" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 5, ease: "linear" }}
               />
             </div>
-
-            <div className="mt-8 flex flex-col items-center gap-2">
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="font-mono text-[9px] uppercase tracking-[0.6em] text-white/30"
-              >
-                Initialising Archive
-              </motion.span>
-              <span className="font-mono text-[10px] text-white/60 tabular-nums">
-                {Math.round(progress)}%
-              </span>
-            </div>
           </div>
 
-          {/* Bottom Branding */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="absolute bottom-12 flex flex-col items-center gap-4"
-          >
-            <div className="h-12 w-[1px] bg-gradient-to-b from-white/20 to-transparent" />
-            <span className="text-[9px] uppercase tracking-[0.8em] text-white/20 font-bold">
-              Worldwide Signal Found
-            </span>
-          </motion.div>
-
-          {/* Noise overlay specific to loader for cinematic feel */}
           <div className="pointer-events-none absolute inset-0 z-50 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
         </motion.div>
       )}

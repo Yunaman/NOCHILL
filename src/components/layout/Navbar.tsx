@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { name: "SHOP", href: "/shop" },
-  { name: "COLLECTIONS", href: "/collections" },
+  { name: "DROPS", href: "/collections" },
   { name: "ARCHIVE", href: "/archive" },
-  { name: "CONTACT", href: "/contact" },
+  { name: "ABOUT", href: "/contact" },
 ];
 
 interface NavbarProps {
@@ -18,103 +19,85 @@ interface NavbarProps {
 }
 
 export function Navbar({ onOpenCart }: NavbarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const pathname = usePathname();
+  const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <>
-      <nav
-        className={cn(
-          "fixed top-0 left-0 right-0 z-[60] flex items-center justify-between px-6 py-6 transition-all duration-500 md:px-12",
-          scrolled ? "bg-black/80 py-4 backdrop-blur-md" : "bg-transparent"
-        )}
+    <div className="fixed bottom-8 left-1/2 z-[100] w-full -translate-x-1/2 px-6 md:w-auto">
+      <motion.nav
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 5.5, duration: 1, ease: [0.76, 0, 0.24, 1] }}
+        className="glass relative flex items-center justify-between gap-2 rounded-full px-4 py-2 backdrop-blur-2xl md:gap-8 md:px-8 md:py-3"
       >
-        <Link href="/" className="text-xl font-bold tracking-tighter">
-          NOCHILL
-        </Link>
+        {/* Brand Signature Left */}
+        <div className="hidden items-center md:flex">
+          <span className="text-[9px] font-bold tracking-[0.4em] text-white/30 uppercase">
+            NOCHILL // YUNA
+          </span>
+          <div className="mx-6 h-4 w-[1px] bg-white/10" />
+        </div>
 
-        <div className="flex items-center gap-8">
-          <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
+        {/* Links */}
+        <div className="flex items-center gap-1 md:gap-4">
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href;
+            return (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-[10px] font-bold tracking-widest text-white/60 transition-colors hover:text-white"
+                onMouseEnter={() => setHovered(link.name)}
+                onMouseLeave={() => setHovered(null)}
+                className="group relative px-3 py-2 md:px-4"
               >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button onClick={onOpenCart} className="p-2 transition-transform hover:scale-110">
-              <ShoppingCart size={20} />
-            </button>
-            <button
-              onClick={() => setIsOpen(true)}
-              className="text-[10px] font-bold tracking-widest hover:opacity-60 transition-opacity"
-            >
-              MENU
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[100] flex flex-col bg-black p-6 md:p-12"
-          >
-            <div className="flex justify-between">
-              <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
-                Navigation
-              </span>
-              <button onClick={() => setIsOpen(false)} className="hover:rotate-90 transition-transform duration-500">
-                <X size={32} />
-              </button>
-            </div>
-
-            <div className="mt-24 flex flex-col gap-6">
-              {NAV_LINKS.map((link, index) => (
-                <motion.div
-                  key={link.name}
-                  initial={{ x: 100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 * index + 0.3 }}
+                <span
+                  className={cn(
+                    "relative z-10 text-[10px] font-bold tracking-[0.3em] transition-colors duration-300 md:text-[11px]",
+                    isActive ? "text-white" : "text-white/40 group-hover:text-white"
+                  )}
                 >
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-6xl font-bold tracking-tighter hover:text-white/40 transition-colors md:text-8xl"
-                  >
-                    {link.name}
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
+                  {link.name}
+                </span>
 
-            <div className="mt-auto flex justify-between border-t border-white/10 pt-8">
-              <div className="flex gap-8">
-                <span className="text-[10px] uppercase tracking-widest text-white/40">Instagram</span>
-                <span className="text-[10px] uppercase tracking-widest text-white/40">Twitter</span>
-              </div>
-              <span className="text-[10px] uppercase tracking-widest text-white/40">© 2024 NOCHILL</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+                {/* Active Indicator Glow */}
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute inset-0 z-0 rounded-full bg-white/5 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+
+                {/* Hover Background */}
+                <AnimatePresence>
+                  {hovered === link.name && !isActive && (
+                    <motion.div
+                      layoutId="nav-hover"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 z-0 rounded-full bg-white/[0.03]"
+                    />
+                  )}
+                </AnimatePresence>
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="mx-2 h-4 w-[1px] bg-white/10 md:mx-4" />
+
+        {/* Cart */}
+        <button
+          onClick={onOpenCart}
+          className="group relative flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 transition-all hover:bg-white/10 md:px-6"
+        >
+          <ShoppingCart size={14} className="text-white/60 group-hover:text-white" />
+          <span className="hidden text-[10px] font-bold tracking-widest text-white/60 group-hover:text-white md:block">
+            CART
+          </span>
+        </button>
+      </motion.nav>
+    </div>
   );
 }

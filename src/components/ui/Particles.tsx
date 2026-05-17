@@ -26,10 +26,10 @@ export function Particles() {
       constructor() {
         this.x = Math.random() * canvas!.width;
         this.y = Math.random() * canvas!.height;
-        this.size = Math.random() * 1.5 + 0.1;
-        this.speedX = Math.random() * 0.2 - 0.1;
-        this.speedY = Math.random() * 0.2 - 0.1;
-        this.opacity = Math.random() * 0.5;
+        this.size = Math.random() * 1.2 + 0.1;
+        this.speedX = Math.random() * 0.15 - 0.075;
+        this.speedY = Math.random() * 0.15 - 0.075;
+        this.opacity = Math.random() * 0.3;
       }
 
       update() {
@@ -54,7 +54,7 @@ export function Particles() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       particles = [];
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 40; i++) {
         particles.push(new Particle());
       }
     };
@@ -86,7 +86,7 @@ export function Particles() {
   return (
     <canvas
       ref={canvasRef}
-      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-30"
+      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-40"
     />
   );
 }

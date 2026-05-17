@@ -60,10 +60,11 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 2 }}
-            className="mb-6"
+            transition={{ delay: 6, duration: 2 }}
+            className="mb-6 flex flex-col items-center gap-2"
           >
-            <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Drop 001 / Archive</span>
+            <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Drop 001 // Archive</span>
+            <span className="text-[8px] uppercase tracking-[1em] text-white/20">Curated by Yuna</span>
           </motion.div>
 
           <div className="h-64 w-full md:h-96">
@@ -77,19 +78,19 @@ export default function Home() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
-            className="mt-12 text-sm font-bold tracking-[0.4em] md:text-xl text-white/60"
+            transition={{ delay: 7, duration: 1 }}
+            className="mt-12 text-sm font-bold tracking-[0.6em] md:text-xl text-white/60"
           >
-            BUILT FOR THE OUTSIDERS.
+            EST. ADDIS // WORLDWIDE
           </motion.p>
         </div>
 
         <div className="absolute bottom-12 left-12 hidden md:block">
-           <span className="text-[10px] uppercase tracking-widest text-white/20">Coordinates: 51.5074° N, 0.1278° W</span>
+           <span className="text-[10px] uppercase tracking-widest text-white/20 font-bold">BUILT DIFFERENT</span>
         </div>
 
         <div className="absolute bottom-12 right-12 hidden md:block text-right">
-           <span className="text-[10px] uppercase tracking-widest text-white/20">Status: No Signal Found</span>
+           <span className="text-[10px] uppercase tracking-widest text-white/20">NOCHILL NEVER SLEEPS.</span>
         </div>
 
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
@@ -102,14 +103,14 @@ export default function Home() {
       <section ref={philosophyRef} className="relative min-h-screen px-6 py-32 md:px-24 flex flex-col justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <div className="space-y-16">
-            <h2 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9] reveal-text">
+            <h2 className="editorial-heading reveal-text uppercase">
               WE AREN&apos;T <br /> FOR EVERYONE.
             </h2>
             <div className="space-y-8 max-w-md">
-               <p className="text-white/40 leading-relaxed uppercase text-[10px] tracking-[0.2em]">
+               <p className="text-white/40 leading-relaxed uppercase text-[10px] tracking-[0.4em]">
                  The underground is not a place, it is a state of mind. We create artifacts for those who live in the shadows.
                </p>
-               <p className="text-white/60 leading-relaxed">
+               <p className="text-white/60 leading-relaxed text-sm md:text-base">
                  NOCHILL is a luxury streetwear collective exploring the boundaries of cinema and fashion.
                  Every piece is a chapter. Every drop is a signal.
                </p>
@@ -125,7 +126,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="relative aspect-[4/5] overflow-hidden grayscale glass p-4">
+          <div className="relative aspect-[4/5] overflow-hidden grayscale glass p-4 cinematic-shadow">
             <div className="relative h-full w-full overflow-hidden">
                <Image
                 src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000"
@@ -135,7 +136,7 @@ export default function Home() {
               />
             </div>
             <div className="absolute top-8 right-8 mix-blend-difference">
-               <span className="text-[10px] font-bold uppercase tracking-widest">001 / VOID</span>
+               <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">001 / VOID</span>
             </div>
           </div>
         </div>
