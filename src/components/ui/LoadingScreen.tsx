@@ -8,6 +8,17 @@ import * as THREE from "three";
 
 function MetallicLogo() {
   const meshRef = useRef<THREE.Group>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      setScale(isMobile ? 0.6 : 1);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -18,7 +29,7 @@ function MetallicLogo() {
 
   return (
     <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-      <group ref={meshRef}>
+      <group ref={meshRef} scale={scale}>
         <Text
           fontSize={1.2}
           letterSpacing={0.4}
@@ -106,9 +117,9 @@ export function LoadingScreen() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: showContent ? 1 : 0 }}
-              className="absolute bottom-24 left-1/2 w-full -translate-x-1/2 text-center"
+              className="absolute bottom-24 left-1/2 w-full -translate-x-1/2 text-center px-6"
             >
-              <span className="text-[9px] font-bold uppercase tracking-[1em] text-white/20">
+              <span className="text-[9px] font-bold uppercase tracking-[1em] text-white/20 block">
                 A Vision by Yuna // No Signal Found
               </span>
             </motion.div>

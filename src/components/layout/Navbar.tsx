@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Search, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -30,16 +30,27 @@ export function Navbar({ onOpenCart }: NavbarProps) {
         transition={{ delay: 5.5, duration: 1, ease: [0.76, 0, 0.24, 1] }}
         className="glass relative flex items-center justify-between gap-2 rounded-full px-4 py-2 backdrop-blur-2xl md:gap-8 md:px-8 md:py-3"
       >
-        {/* Brand Signature Left */}
-        <div className="hidden items-center md:flex">
-          <span className="text-[9px] font-bold tracking-[0.4em] text-white/30 uppercase">
-            NOCHILL // YUNA
-          </span>
-          <div className="mx-6 h-4 w-[1px] bg-white/10" />
-        </div>
+        {/* Home / Signature */}
+        <Link
+          href="/"
+          className="flex items-center gap-4 group"
+          onMouseEnter={() => setHovered("HOME")}
+          onMouseLeave={() => setHovered(null)}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 transition-colors group-hover:bg-white/10">
+            <Home size={14} className="text-white/60 group-hover:text-white" />
+          </div>
+          <div className="hidden flex-col md:flex">
+            <span className="text-[8px] font-bold tracking-[0.4em] text-white/30 uppercase">
+              NOCHILL // YUNA
+            </span>
+          </div>
+        </Link>
+
+        <div className="mx-2 hidden h-4 w-[1px] bg-white/10 md:block" />
 
         {/* Links */}
-        <div className="flex items-center gap-1 md:gap-4">
+        <div className="flex items-center gap-1 md:gap-2">
           {NAV_LINKS.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -52,14 +63,13 @@ export function Navbar({ onOpenCart }: NavbarProps) {
               >
                 <span
                   className={cn(
-                    "relative z-10 text-[10px] font-bold tracking-[0.3em] transition-colors duration-300 md:text-[11px]",
+                    "relative z-10 text-[9px] font-bold tracking-[0.3em] transition-colors duration-300 md:text-[10px]",
                     isActive ? "text-white" : "text-white/40 group-hover:text-white"
                   )}
                 >
                   {link.name}
                 </span>
 
-                {/* Active Indicator Glow */}
                 {isActive && (
                   <motion.div
                     layoutId="nav-active"
@@ -68,7 +78,6 @@ export function Navbar({ onOpenCart }: NavbarProps) {
                   />
                 )}
 
-                {/* Hover Background */}
                 <AnimatePresence>
                   {hovered === link.name && !isActive && (
                     <motion.div
@@ -87,16 +96,25 @@ export function Navbar({ onOpenCart }: NavbarProps) {
 
         <div className="mx-2 h-4 w-[1px] bg-white/10 md:mx-4" />
 
-        {/* Cart */}
-        <button
-          onClick={onOpenCart}
-          className="group relative flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 transition-all hover:bg-white/10 md:px-6"
-        >
-          <ShoppingCart size={14} className="text-white/60 group-hover:text-white" />
-          <span className="hidden text-[10px] font-bold tracking-widest text-white/60 group-hover:text-white md:block">
-            CART
-          </span>
-        </button>
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10"
+          >
+            <Search size={14} className="text-white/60" />
+          </button>
+
+          <button
+            onClick={onOpenCart}
+            className="group relative flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 transition-all hover:bg-white/10 md:px-6"
+          >
+            <ShoppingCart size={14} className="text-white/60 group-hover:text-white" />
+            <span className="hidden text-[10px] font-bold tracking-widest text-white/60 group-hover:text-white lg:block">
+              CART
+            </span>
+          </button>
+        </div>
       </motion.nav>
     </div>
   );

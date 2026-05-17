@@ -7,12 +7,12 @@ import { PageTransition } from "@/components/ui/PageTransition";
 import { Cart } from "@/components/ui/Cart";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { Particles } from "@/components/ui/Particles";
+import { SearchModal } from "@/components/ui/SearchModal";
 import { useLenis } from "@/hooks/useLenis";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Apply smooth scroll globally
   useLenis();
 
   useEffect(() => {
@@ -26,6 +26,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
       <CustomCursor />
       <Particles />
       <LoadingScreen />
+      <SearchModal />
       <Navbar onOpenCart={() => setIsCartOpen(true)} />
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       <PageTransition>
