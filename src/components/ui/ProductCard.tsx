@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Product } from "@/types";
-import { imageHover } from "@/lib/animations";
 
 interface ProductCardProps {
   product: Product;
@@ -12,43 +11,68 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <Link href={`/product/${product.id}`} className="group relative block">
-      <div className="aspect-[3/4] w-full bg-zinc-900 overflow-hidden relative glass">
+    <Link href={`/product/${product.id}`} className="group relative block w-full overflow-hidden">
+      <div className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-950">
+        {/* Cinematic Zoom & Grayscale-to-Color Transition */}
         <motion.div
-          initial="initial"
-          whileHover="hover"
-          className="h-full w-full relative"
+          className="h-full w-full"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
         >
-          <motion.div variants={imageHover} className="h-full w-full relative">
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              fill
-              className="object-cover"
-            />
-          </motion.div>
-
-          {/* Soft Glow Hover */}
-          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
-          {/* Subtle Distort Overlay (Simulated with Grain) */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-repeat" />
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            fill
+            className="object-cover transition-all duration-1000 grayscale group-hover:grayscale-0"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          />
         </motion.div>
+
+        {/* Brand Detail Overlay */}
+        <div className="absolute top-4 left-4 z-10 overflow-hidden">
+           <motion.span
+             initial={{ y: "100%" }}
+             whileHover={{ y: 0 }}
+             className="text-[8px] font-bold tracking-[0.4em] uppercase text-white/40"
+           >
+             Nochill // Archive
+           </motion.span>
+        </div>
+
+        {/* Hover Text Reveal */}
+        <div className="absolute inset-x-0 bottom-0 z-10 p-6">
+          <div className="overflow-hidden">
+            <motion.div
+              initial={{ y: "100%" }}
+              whileHover={{ y: 0 }}
+              transition={{ duration: 0.6, ease: [0.33, 1, 0.68, 1] }}
+              className="flex items-center justify-between"
+            >
+              <span className="text-[10px] font-bold tracking-[0.5em] uppercase text-white">
+                View Details
+              </span>
+              <span className="text-[10px] font-bold text-white/60">
+                ${product.price}
+              </span>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
       </div>
 
-      <div className="mt-6 flex flex-col gap-1">
+      <div className="mt-6 space-y-2 px-2">
         <div className="flex justify-between items-start">
-          <h3 className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/80 group-hover:text-white transition-colors">
+          <h3 className="text-xs font-bold uppercase tracking-[0.4em] text-white/80 transition-colors group-hover:text-white">
             {product.name}
           </h3>
-          <p className="text-[10px] font-bold tracking-widest">${product.price}</p>
         </div>
-        <p className="text-[8px] text-white/20 uppercase tracking-[0.4em]">{product.category}</p>
-      </div>
-
-      <div className="absolute top-6 right-6 translate-y-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="glass px-4 py-2">
-           <span className="text-[8px] font-bold uppercase tracking-[0.5em]">View Artifact</span>
+        <div className="flex items-center gap-4">
+          <span className="text-[9px] uppercase tracking-[0.4em] text-white/20">
+            {product.category}
+          </span>
+          <div className="h-[1px] flex-1 bg-white/5" />
         </div>
       </div>
     </Link>
