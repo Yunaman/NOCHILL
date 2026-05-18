@@ -2,18 +2,22 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Text, Float, Environment, PerspectiveCamera, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
 
 function MetallicLogo() {
   const meshRef = useRef<THREE.Group>(null);
+  const { viewport } = useThree();
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
     const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      setScale(isMobile ? 0.6 : 1);
+      const width = window.innerWidth;
+      // More granular scaling for mobile/tablet/desktop
+      if (width < 480) setScale(0.45);
+      else if (width < 768) setScale(0.65);
+      else setScale(1);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -34,6 +38,8 @@ function MetallicLogo() {
           fontSize={1.2}
           letterSpacing={0.4}
           color="white"
+          maxWidth={viewport.width * 2} // Prevent overflow
+          textAlign="center"
         >
           NOCHILL
           <meshStandardMaterial
@@ -65,13 +71,25 @@ function MetallicLogo() {
 }
 
 function Scene() {
+  const [camPos, setCamPos] = useState<[number, number, number]>([0, 0, 5]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Adjust camera distance for smaller screens to ensure framing
+      setCamPos(window.innerWidth < 768 ? [0, 0, 7] : [0, 0, 5]);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0, 5]} />
+      <PerspectiveCamera makeDefault position={camPos} fov={50} />
       <ambientLight intensity={0.2} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
       <pointLight position={[-10, -10, -10]} intensity={0.5} />
-      <Sparkles count={100} scale={10} size={1} speed={0.4} opacity={0.2} />
+      <Sparkles count={80} scale={10} size={1} speed={0.4} opacity={0.2} />
       <MetallicLogo />
       <Environment preset="night" />
     </>
@@ -108,7 +126,11 @@ export function LoadingScreen() {
           className="fixed inset-0 z-[100001] bg-black"
         >
           <div className="relative h-full w-full">
-            <Canvas shadows>
+            <Canvas
+              shadows
+              dpr={[1, 2]} // Performance optimization
+              gl={{ antialias: true, alpha: false }}
+            >
               <Scene />
             </Canvas>
 
