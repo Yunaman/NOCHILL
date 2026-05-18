@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { NEXT_DROP } from "@/lib/data";
+import { useSettings } from "@/hooks/useSettings";
 import Image from "next/image";
 
 export function NextDrop() {
+  const { settings } = useSettings();
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
@@ -14,7 +15,7 @@ export function NextDrop() {
   });
 
   useEffect(() => {
-    const target = new Date(NEXT_DROP.date).getTime();
+    const target = new Date(settings.dropDate).getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -34,14 +35,14 @@ export function NextDrop() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [settings.dropDate]);
 
   return (
     <section className="relative min-h-[80vh] w-full overflow-hidden bg-black py-32 px-6 flex flex-col items-center justify-center">
       {/* Background Teaser */}
       <div className="absolute inset-0 opacity-40">
         <Image
-          src={NEXT_DROP.image}
+          src={settings.dropImage}
           alt="Next Drop Teaser"
           fill
           className="object-cover grayscale"
@@ -98,10 +99,10 @@ export function NextDrop() {
         >
           <div className="flex flex-col items-center gap-4">
              <span className="text-[10px] uppercase tracking-[0.6em] text-white/60 font-bold">
-               {NEXT_DROP.title}
+               {settings.dropTitle}
              </span>
              <p className="max-w-xs text-[10px] uppercase tracking-[0.2em] text-white/40 leading-relaxed">
-               {NEXT_DROP.description}
+               {settings.dropDescription}
              </p>
           </div>
 

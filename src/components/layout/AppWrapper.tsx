@@ -1,37 +1,64 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
+import { ReactLenis } from "@studio-freight/react-lenis";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
-import { PageTransition } from "@/components/ui/PageTransition";
+import { Navbar } from "@/components/layout/Navbar";
 import { Cart } from "@/components/ui/Cart";
-import { CustomCursor } from "@/components/ui/CustomCursor";
-import { Particles } from "@/components/ui/Particles";
-import { SearchModal } from "@/components/ui/SearchModal";
-import { useLenis } from "@/hooks/useLenis";
+import { useSettings } from "@/hooks/useSettings";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  useLenis();
+  const [isLoading, setIsLoading] = useState(true);
+  const { settings } = useSettings();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const handleOpenCart = () => setIsCartOpen(true);
-    window.addEventListener("open-cart", handleOpenCart);
-    return () => window.removeEventListener("open-cart", handleOpenCart);
+    setIsMounted(true);
+    // Force a slightly longer loading for the cinematic feel
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 4500);
+
+    return () => clearTimeout(timer);
   }, []);
 
+  if (!isMounted) return <div className="bg-black min-h-screen" />;
+
   return (
-    <>
-      <CustomCursor />
-      <Particles />
-      <LoadingScreen />
-      <SearchModal />
-      <Navbar onOpenCart={() => setIsCartOpen(true)} />
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-      <PageTransition>
-        <main>{children}</main>
-      </PageTransition>
-    </>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
+      <AnimatePresence mode="wait">
+        {isLoading && <LoadingScreen key="loader" />}
+      </AnimatePresence>
+
+      {!isLoading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          {settings.maintenanceMode ? (
+            <div className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-16 h-16 border border-white/20 flex items-center justify-center mb-8">
+                 <div className="w-2 h-2 bg-red-500 animate-pulse" />
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-4">Under Maintenance</h1>
+              <p className="text-[10px] uppercase tracking-[0.5em] text-white/40 max-w-xs">
+                The void is currently recalibrating. Check back later for the next signal.
+              </p>
+              <div className="mt-12 text-[8px] font-mono text-white/10">
+                REF: SIGNAL_INTERRUPTED_404
+              </div>
+            </div>
+          ) : (
+            <>
+              <Navbar />
+              <Cart />
+              <main>{children}</main>
+            </>
+          )}
+        </motion.div>
+      )}
+    </ReactLenis>
   );
 }

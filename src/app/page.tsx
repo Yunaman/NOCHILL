@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChromeLogo } from "@/components/three/ChromeLogo";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { NextDrop } from "@/components/ui/NextDrop";
-import { PRODUCTS } from "@/lib/data";
+import { useProducts } from "@/hooks/useProducts";
+import { useSettings } from "@/hooks/useSettings";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
@@ -17,8 +18,12 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const philosophyRef = useRef<HTMLDivElement>(null);
+  const { products } = useProducts();
+  const { settings } = useSettings();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     const titles = document.querySelectorAll(".reveal-text");
     titles.forEach((title) => {
       gsap.fromTo(
@@ -54,7 +59,9 @@ export default function Home() {
     };
   }, []);
 
-  const featuredProducts = PRODUCTS.filter(p => p.featured);
+  const featuredProducts = products.filter(p => p.featured && !p.archived);
+
+  if (!isMounted) return <div className="min-h-screen bg-black" />;
 
   return (
     <div ref={containerRef} className="relative bg-black">
@@ -68,7 +75,7 @@ export default function Home() {
             className="mb-6 flex flex-col items-center gap-2"
           >
             <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Drop 001 // Archive</span>
-            <span className="text-[8px] uppercase tracking-[1em] text-white/20">Curated by Yuna</span>
+            <span className="text-[8px] uppercase tracking-[1em] text-white/20">{settings.introText}</span>
           </motion.div>
 
           <div className="h-64 w-full md:h-96">
@@ -76,7 +83,7 @@ export default function Home() {
           </div>
 
           <div className="mt-8 overflow-hidden">
-             <h1 className="text-huge reveal-text">NOCHILL</h1>
+             <h1 className="text-huge reveal-text">{settings.heroText}</h1>
           </div>
 
           <motion.p
@@ -109,7 +116,7 @@ export default function Home() {
         <div className="mb-32 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Selected Works</span>
-            <h2 className="editorial-heading mt-6 uppercase reveal-text">
+            <h2 className="editorial-heading mt-6 uppercase reveal-text text-white">
               THE <br /> FEATURED <br /> ARCHIVE.
             </h2>
           </div>
@@ -163,7 +170,7 @@ export default function Home() {
       <section ref={philosophyRef} className="relative min-h-screen px-6 py-32 md:px-24 flex flex-col justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <div className="space-y-16">
-            <h2 className="editorial-heading reveal-text uppercase">
+            <h2 className="editorial-heading reveal-text uppercase text-white">
               WE AREN&apos;T <br /> FOR EVERYONE.
             </h2>
             <div className="space-y-8 max-w-md">
@@ -179,7 +186,7 @@ export default function Home() {
               href="/shop"
               className="inline-block group"
             >
-              <span className="text-xs font-bold tracking-[0.5em] uppercase transition-colors group-hover:text-white/40">
+              <span className="text-xs font-bold tracking-[0.5em] uppercase transition-colors group-hover:text-white/40 text-white">
                 Explore Shop
               </span>
               <div className="mt-2 h-px w-full bg-white transition-transform duration-500 scale-x-100 group-hover:scale-x-50 origin-left" />
@@ -189,7 +196,7 @@ export default function Home() {
           <div className="relative aspect-[4/5] overflow-hidden grayscale glass p-4 cinematic-shadow">
             <div className="relative h-full w-full overflow-hidden">
                <Image
-                src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000"
+                src="https://images.unsplash.com/photo-1618354691792-d1d42acfd860?q=80&w=1000"
                 alt="Model"
                 fill
                 className="object-cover parallax-image scale-110"
