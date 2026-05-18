@@ -1,5 +1,12 @@
 import { Product, Collection, NextDrop } from "@/types";
 
+/**
+ * MOCK DATA - NOCHILL Archive
+ *
+ * Aesthetic: Cinematic Underground / Travis Scott Editorial
+ * Imagery source: Verified Unsplash IDs matching moody streetwear vibe.
+ */
+
 export const PRODUCTS: Product[] = [
   {
     id: "1",
@@ -50,7 +57,7 @@ export const PRODUCTS: Product[] = [
     description: "Ribbed knit beanie with chrome-finished logo plaque.",
     category: "Accessories",
     images: [
-      "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000",
+      "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000",
       "https://images.unsplash.com/photo-1640134444558-5f212265005c?q=80&w=1000"
     ],
     details: ["Wool blend", "Removable metal plaque", "Double fold", "One size"],

@@ -56,13 +56,19 @@ export default function AdminDashboard() {
       price: 0,
       description: "NEW DESCRIPTION",
       category: "Apparel",
-      images: ["https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000"],
+      images: ["", ""],
       details: [],
       featured: false,
       variants: ["S", "M", "L", "XL"]
     };
     setProducts([newProduct, ...products]);
     handleEdit(newProduct);
+  };
+
+  const updateImageUrl = (index: number, url: string) => {
+    const newImages = [...(editForm.images || ["", ""])];
+    newImages[index] = url;
+    setEditForm({ ...editForm, images: newImages });
   };
 
   return (
@@ -164,6 +170,21 @@ export default function AdminDashboard() {
                             </select>
                           </div>
                         </div>
+                        <div className="space-y-4">
+                           <label className="text-[10px] uppercase tracking-widest text-white/40 block">Asset Mapping (URLs)</label>
+                           <input
+                            className="w-full bg-white/5 border border-white/10 p-4 text-[10px] text-white outline-none placeholder:text-white/10"
+                            value={editForm.images?.[0] || ""}
+                            onChange={e => updateImageUrl(0, e.target.value)}
+                            placeholder="FRONT IMAGE URL"
+                          />
+                           <input
+                            className="w-full bg-white/5 border border-white/10 p-4 text-[10px] text-white outline-none placeholder:text-white/10"
+                            value={editForm.images?.[1] || ""}
+                            onChange={e => updateImageUrl(1, e.target.value)}
+                            placeholder="BACK IMAGE URL (HOVER)"
+                          />
+                        </div>
                         <div>
                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Product Story</label>
                           <textarea
@@ -177,19 +198,19 @@ export default function AdminDashboard() {
 
                       <div className="space-y-8">
                         <div>
-                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Visual Assets</label>
+                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Visual Previews</label>
                            <div className="grid grid-cols-2 gap-4">
-                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group cursor-pointer overflow-hidden relative">
+                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group overflow-hidden relative">
                                  {editForm.images?.[0] ? (
-                                    <Image src={editForm.images[0]} alt="Front" fill className="object-cover opacity-60" />
+                                    <Image src={editForm.images[0]} alt="Front" fill className="object-cover" />
                                  ) : <ImageIcon size={24} className="text-white/20" />}
-                                 <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Front View</span>
+                                 {!editForm.images?.[0] && <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Front View</span>}
                               </div>
-                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group cursor-pointer overflow-hidden relative">
+                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group overflow-hidden relative">
                                  {editForm.images?.[1] ? (
-                                    <Image src={editForm.images[1]} alt="Back" fill className="object-cover opacity-60" />
+                                    <Image src={editForm.images[1]} alt="Back" fill className="object-cover" />
                                  ) : <ImageIcon size={24} className="text-white/20" />}
-                                 <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Back View (Hover)</span>
+                                 {!editForm.images?.[1] && <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Back View</span>}
                               </div>
                            </div>
                         </div>
@@ -222,7 +243,13 @@ export default function AdminDashboard() {
                   ) : (
                     <>
                       <div className="relative h-64 w-48 overflow-hidden bg-zinc-950 shrink-0">
-                         <Image src={product.images[0]} alt={product.name} fill className="object-cover grayscale transition-all group-hover:grayscale-0" />
+                         {product.images[0] ? (
+                           <Image src={product.images[0]} alt={product.name} fill className="object-cover grayscale transition-all group-hover:grayscale-0" />
+                         ) : (
+                           <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
+                             <ImageIcon className="text-white/10" />
+                           </div>
+                         )}
                          {product.featured && <div className="absolute top-4 left-4 bg-white text-black px-2 py-1 text-[8px] font-bold uppercase tracking-widest">Featured</div>}
                       </div>
                       <div className="flex-1 flex flex-col justify-center">

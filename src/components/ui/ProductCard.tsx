@@ -13,6 +13,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [frontError, setFrontError] = useState(false);
+  const [backError, setBackError] = useState(false);
 
   return (
     <Link
@@ -29,29 +31,44 @@ export function ProductCard({ product }: ProductCardProps) {
           transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
         >
           {/* Front Image */}
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            fill
-            className={cn(
-              "object-cover transition-all duration-1000",
-              isHovered ? "opacity-0 grayscale-0" : "opacity-100 grayscale"
-            )}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          />
+          {!frontError ? (
+            <Image
+              src={product.images[0]}
+              alt={product.name}
+              fill
+              onError={() => setFrontError(true)}
+              className={cn(
+                "object-cover transition-all duration-1000",
+                isHovered ? "opacity-0 grayscale-0" : "opacity-100 grayscale"
+              )}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            />
+          ) : (
+             <div className="absolute inset-0 flex items-center justify-center bg-zinc-900">
+               <span className="text-[8px] uppercase tracking-widest text-white/10">No Signal Found</span>
+             </div>
+          )}
 
           {/* Back Image Reveal */}
-          {product.images[1] && (
+          {product.images[1] && !backError ? (
              <Image
               src={product.images[1]}
               alt={`${product.name} back`}
               fill
+              onError={() => setBackError(true)}
               className={cn(
                 "object-cover transition-all duration-1000",
                 isHovered ? "opacity-100 grayscale-0" : "opacity-0 grayscale"
               )}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             />
+          ) : product.images[1] && (
+            <div className={cn(
+              "absolute inset-0 flex items-center justify-center bg-zinc-800 transition-opacity duration-1000",
+              isHovered ? "opacity-100" : "opacity-0"
+            )}>
+              <span className="text-[8px] uppercase tracking-widest text-white/10">No Signal Found</span>
+            </div>
           )}
         </motion.div>
 
