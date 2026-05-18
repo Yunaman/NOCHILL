@@ -1,0 +1,12 @@
+
+> nochill-app@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+   ▲ Next.js 15.2.9
+   - Local:        http://localhost:3001
+   - Network:      http://192.168 ○ Compiling / ...
+ ✓ Compiled / in 13.6s ( ○ Compiling / ...
+ ✓ Compiled / in 10s (2785 modules)
+ GET / 200 in 12240ms
+ ✓ Compiled in 2.6s (1330 modules)
