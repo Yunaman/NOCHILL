@@ -1,92 +1,88 @@
 import { Product, Collection, NextDrop } from "@/types";
 
 /**
- * MOCK DATA - NOCHILL Archive
- *
- * Aesthetic: Cinematic Underground / Travis Scott Editorial
- * Imagery source: Verified Unsplash IDs matching moody streetwear vibe.
+ * PRODUCTION MOCK DATA - NOCHILL
+ * Curated high-quality visual artifacts for luxury streetwear aesthetic.
  */
 
 export const PRODUCTS: Product[] = [
   {
-    id: "1",
-    name: "VOID HOODIE",
-    price: 180,
-    description: "Heavyweight cotton oversized hoodie with distressed edges. Built for the outsiders.",
-    category: "Apparel",
+    id: "p1",
+    name: "NOCHILL SIGNATURE HOODIE",
+    price: 185,
+    description: "HEAVYWEIGHT 500GSM COTTON HOODIE. DESIGNED FOR THE VOID. FEATURES DISCREET CHROME LOGO EMBROIDERY AND CINEMATIC DROPPED SHOULDERS.",
+    category: "Hoodies",
     images: [
       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000",
-      "https://images.unsplash.com/photo-1556821921-25237edd16e6?q=80&w=1000"
+      "https://images.unsplash.com/photo-1514332930284-94224a742123?q=80&w=1000"
     ],
-    details: ["450 GSM Cotton", "Enzyme Washed", "Screen printed branding", "Oversized fit"],
+    details: ["500GSM LUXURY COTTON", "DOUBLE-STITCHED SEAMS", "CHROME LOGO EMBROIDERY", "OVERSIZED CINEMATIC FIT"],
     featured: true,
     variants: ["S", "M", "L", "XL"]
   },
   {
-    id: "2",
-    name: "SIGNAL CARGO",
-    price: 220,
-    description: "Multi-pocket technical cargo pants in matte black nylon. No signal found.",
-    category: "Apparel",
-    images: [
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=1000",
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=1000"
-    ],
-    details: ["Water-resistant nylon", "Custom hardware", "Adjustable hem", "6 functional pockets"],
-    featured: true,
-    variants: ["28", "30", "32", "34"]
-  },
-  {
-    id: "3",
-    name: "ARCHIVE TEE",
+    id: "p2",
+    name: "VOID ARCHIVE TEE",
     price: 85,
-    description: "Vintage washed graphic tee featuring the NOCHILL archive emblem.",
-    category: "Apparel",
+    description: "PREMIUM OVERSIZED TEE IN TRIPLE-WASHED BLACK. FEATURES DISTRESSED EDGES AND REAR SIGNAL PRINT.",
+    category: "Tees",
     images: [
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=1000",
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1000"
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1000",
+      "https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?q=80&w=1000"
     ],
-    details: ["240 GSM Cotton", "Dropped shoulders", "Direct-to-garment print", "Pre-shrunk"],
-    featured: false,
-    variants: ["S", "M", "L", "XL"]
+    details: ["250GSM SINGLE JERSEY", "SCREEN-PRINTED GRAPHICS", "DISTRESSED HEM DETAIL", "PRE-SHRUNK FOR PERFECT FIT"],
+    featured: true,
+    variants: ["M", "L", "XL"]
   },
   {
-    id: "4",
-    name: "CHROME BEANIE",
+    id: "p3",
+    name: "TACTICAL VOID CARGO",
+    price: 245,
+    description: "MULTIPLE COMPARTMENT TACTICAL PANTS WITH REFLECTIVE ACCENTS. WATER-RESISTANT FINISH FOR UNDERGROUND OPERATIVES.",
+    category: "Pants",
+    images: [
+      "https://images.unsplash.com/photo-1511105612320-2e62a04dd044?q=80&w=1000",
+      "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?q=80&w=1000"
+    ],
+    details: ["NYLON RIPSTOP FABRIC", "6 TACTICAL POCKETS", "ADJUSTABLE ANKLE STRAPS", "WATER-REPELLENT COATING"],
+    featured: true,
+    variants: ["30", "32", "34", "36"]
+  },
+  {
+    id: "p4",
+    name: "NO SIGNAL BEANIE",
     price: 45,
-    description: "Ribbed knit beanie with chrome-finished logo plaque.",
+    description: "MINIMALIST LOGO BEANIE. HEAVY RIBBED KNIT. DESIGNED FOR MAXIMUM COMFORT IN LOW-LIGHT ENVIRONMENTS.",
     category: "Accessories",
     images: [
-      "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000",
-      "https://images.unsplash.com/photo-1640134444558-5f212265005c?q=80&w=1000"
+      "https://images.unsplash.com/photo-1534215754734-18e2973b7d80?q=80&w=1000",
+      "https://images.unsplash.com/photo-1471466054146-e71bcc0d2bb2?q=80&w=1000"
     ],
-    details: ["Wool blend", "Removable metal plaque", "Double fold", "One size"],
-    featured: true,
-    variants: ["OS"]
-  },
+    details: ["100% MERINO WOOL", "RIBBED TEXTURE", "SILVER-THREAD EMBROIDERY"],
+    variants: ["O/S"]
+  }
 ];
 
 export const COLLECTIONS: Collection[] = [
   {
     id: "c1",
-    name: "DROP 001",
-    slug: "drop-001",
-    description: "The initial emergence into the void.",
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000",
+    name: "THE VOID // 001",
+    slug: "the-void-001",
+    description: "The premiere artifact series exploring the boundaries of shadow and light.",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000"
   },
   {
     id: "c2",
-    name: "ARCHIVE",
-    slug: "archive",
-    description: "Historical artifacts from the underground.",
-    image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1000",
-  },
+    name: "NO SIGNAL // 24",
+    slug: "no-signal-24",
+    description: "A tribute to the static of the underground city nights.",
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000"
+  }
 ];
 
 export const NEXT_DROP: NextDrop = {
-  id: "d1",
   title: "VOID RUNNER // 002",
   date: new Date(Date.now() + 86400000 * 7).toISOString(), // 7 days from now
-  image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000",
-  description: "Limited availability artifacts. Worldwide access only."
+  image: "https://images.unsplash.com/photo-1514332930284-94224a742123?q=80&w=1000",
+  description: "THE NEXT EVOLUTION OF THE ARTIFACT COLLECTION. PREPARE FOR DEPLOYMENT."
 };

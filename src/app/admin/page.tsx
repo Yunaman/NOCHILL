@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { PRODUCTS, NEXT_DROP } from "@/lib/data";
+import { useState, useEffect } from "react";
 import { Product } from "@/types";
+import { useProducts } from "@/hooks/useProducts";
+import { useSettings } from "@/hooks/useSettings";
 import {
   Trash2, Edit2, Plus, ArrowLeft, ExternalLink,
   Package, Calendar, User, Layout,
-  Image as ImageIcon, CheckCircle, Archive
+  Image as ImageIcon, CheckCircle, Archive, Upload, Save
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,36 +16,34 @@ import { cn } from "@/lib/utils";
 
 type Tab = "STORE" | "DROP" | "BRAND" | "CEO";
 
+const CATEGORIES = ["Hoodies", "Tees", "Jackets", "Pants", "Headwear", "Accessories"];
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("STORE");
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const { products, addProduct, updateProduct, removeProduct } = useProducts();
+  const { settings, updateSettings } = useSettings();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Product>>({});
+  const [isMounted, setIsMounted] = useState(false);
 
-  // CEO / Brand Settings
-  const [brandSettings, setBrandSettings] = useState({
-    owner: "YUNA",
-    heroText: "NOCHILL",
-    introText: "A Vision by Yuna // No Signal Found",
-    coordinates: "51.5074° N, 0.1278° W",
-    maintenance: false,
-    storeStatus: "ACTIVE"
-  });
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleEdit = (product: Product) => {
     setEditingId(product.id);
     setEditForm(product);
   };
 
-  const handleSave = () => {
+  const handleSaveProduct = () => {
     if (!editForm.id) return;
-    setProducts(products.map(p => p.id === editForm.id ? (editForm as Product) : p));
+    updateProduct(editForm as Product);
     setEditingId(null);
   };
 
   const handleRemove = (id: string) => {
     if (confirm("REMOVING ARTIFACT. ARE YOU SURE?")) {
-      setProducts(products.filter(p => p.id !== id));
+      removeProduct(id);
     }
   };
 
@@ -55,21 +54,43 @@ export default function AdminDashboard() {
       name: "NEW ARTIFACT",
       price: 0,
       description: "NEW DESCRIPTION",
-      category: "Apparel",
+      category: "Hoodies",
       images: ["", ""],
       details: [],
       featured: false,
+      archived: false,
       variants: ["S", "M", "L", "XL"]
     };
-    setProducts([newProduct, ...products]);
+    addProduct(newProduct);
     handleEdit(newProduct);
   };
 
-  const updateImageUrl = (index: number, url: string) => {
-    const newImages = [...(editForm.images || ["", ""])];
-    newImages[index] = url;
-    setEditForm({ ...editForm, images: newImages });
+  const handleImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        const newImages = [...(editForm.images || ["", ""])];
+        newImages[index] = base64String;
+        setEditForm({ ...editForm, images: newImages });
+      };
+      reader.readAsDataURL(file);
+    }
   };
+
+  const handleDropImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateSettings({ dropImage: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  if (!isMounted) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="min-h-screen bg-black pt-32 pb-40 px-6 md:px-12">
@@ -79,17 +100,16 @@ export default function AdminDashboard() {
              <ArrowLeft size={14} /> Back to void
           </Link>
           <div className="flex items-center gap-6">
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter uppercase">ADMIN</h1>
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter uppercase text-white">ADMIN</h1>
             <div className="hidden md:flex gap-2">
-               <span className="bg-white/10 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.4em]">v2.1.0</span>
-               <span className="bg-white/10 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.4em] text-green-500">Live</span>
+               <span className="bg-white/10 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.4em] text-white">v3.1.0</span>
+               <span className="bg-white/10 px-3 py-1 rounded-full text-[8px] font-bold uppercase tracking-[0.4em] text-green-500">Live Sync</span>
             </div>
           </div>
-          <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Management System // Powered by Yuna</p>
+          <p className="mt-4 text-[10px] uppercase tracking-[0.4em] text-white/20 font-bold">Management System // Global Instance</p>
         </div>
       </header>
 
-      {/* Tabs */}
       <div className="flex flex-wrap gap-4 mb-16 border-b border-white/5 pb-4">
         {[
           { id: "STORE", icon: Package, label: "Store" },
@@ -123,7 +143,7 @@ export default function AdminDashboard() {
             className="space-y-12"
           >
             <div className="flex justify-between items-center">
-               <h2 className="text-2xl font-bold tracking-tighter uppercase">Artifact Collection</h2>
+               <h2 className="text-2xl font-bold tracking-tighter uppercase text-white">Artifact Collection</h2>
                <button
                   onClick={handleAdd}
                   className="flex items-center gap-4 border border-white/20 px-8 py-3 text-[10px] font-bold uppercase tracking-[0.5em] text-white hover:bg-white hover:text-black transition-all"
@@ -144,7 +164,6 @@ export default function AdminDashboard() {
                             className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none focus:border-white/40 text-lg font-bold"
                             value={editForm.name}
                             onChange={e => setEditForm({...editForm, name: e.target.value})}
-                            placeholder="PRODUCT NAME"
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-6">
@@ -160,30 +179,15 @@ export default function AdminDashboard() {
                           <div>
                             <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Category</label>
                             <select
-                              className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none appearance-none"
+                              className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none appearance-none font-bold"
                               value={editForm.category}
                               onChange={e => setEditForm({...editForm, category: e.target.value})}
                             >
-                               <option value="Apparel">APPAREL</option>
-                               <option value="Accessories">ACCESSORIES</option>
-                               <option value="Footwear">FOOTWEAR</option>
+                               {CATEGORIES.map(cat => (
+                                 <option key={cat} value={cat}>{cat.toUpperCase()}</option>
+                               ))}
                             </select>
                           </div>
-                        </div>
-                        <div className="space-y-4">
-                           <label className="text-[10px] uppercase tracking-widest text-white/40 block">Asset Mapping (URLs)</label>
-                           <input
-                            className="w-full bg-white/5 border border-white/10 p-4 text-[10px] text-white outline-none placeholder:text-white/10"
-                            value={editForm.images?.[0] || ""}
-                            onChange={e => updateImageUrl(0, e.target.value)}
-                            placeholder="FRONT IMAGE URL"
-                          />
-                           <input
-                            className="w-full bg-white/5 border border-white/10 p-4 text-[10px] text-white outline-none placeholder:text-white/10"
-                            value={editForm.images?.[1] || ""}
-                            onChange={e => updateImageUrl(1, e.target.value)}
-                            placeholder="BACK IMAGE URL (HOVER)"
-                          />
                         </div>
                         <div>
                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Product Story</label>
@@ -198,20 +202,26 @@ export default function AdminDashboard() {
 
                       <div className="space-y-8">
                         <div>
-                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Visual Previews</label>
+                           <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Visual Assets (Local Upload)</label>
                            <div className="grid grid-cols-2 gap-4">
-                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group overflow-hidden relative">
-                                 {editForm.images?.[0] ? (
-                                    <Image src={editForm.images[0]} alt="Front" fill className="object-cover" />
-                                 ) : <ImageIcon size={24} className="text-white/20" />}
-                                 {!editForm.images?.[0] && <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Front View</span>}
-                              </div>
-                              <div className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group overflow-hidden relative">
-                                 {editForm.images?.[1] ? (
-                                    <Image src={editForm.images[1]} alt="Back" fill className="object-cover" />
-                                 ) : <ImageIcon size={24} className="text-white/20" />}
-                                 {!editForm.images?.[1] && <span className="text-[8px] uppercase tracking-widest text-white/40 relative z-10">Back View</span>}
-                              </div>
+                              {[0, 1].map((idx) => (
+                                <label key={idx} className="aspect-[3/4] bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-3 group cursor-pointer overflow-hidden relative">
+                                   <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(idx, e)} />
+                                   {editForm.images?.[idx] ? (
+                                      <>
+                                        <Image src={editForm.images[idx]} alt="Preview" fill className="object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                           <Upload size={20} className="text-white" />
+                                        </div>
+                                      </>
+                                   ) : (
+                                     <>
+                                       <Upload size={24} className="text-white/20 group-hover:text-white transition-colors" />
+                                       <span className="text-[8px] uppercase tracking-widest text-white/40">{idx === 0 ? "Front" : "Back (Hover)"}</span>
+                                     </>
+                                   )}
+                                </label>
+                              ))}
                            </div>
                         </div>
 
@@ -224,7 +234,11 @@ export default function AdminDashboard() {
                              <CheckCircle size={14} />
                              <span className="text-[10px] font-bold uppercase tracking-widest">Featured</span>
                           </label>
-                          <label className="flex items-center justify-center gap-3 p-4 border border-white/10 text-white/40 hover:border-white/40 transition-all cursor-pointer">
+                          <label className={cn(
+                             "flex items-center justify-center gap-3 p-4 border transition-all cursor-pointer",
+                             editForm.archived ? "bg-red-900/40 text-red-500 border-red-500/40" : "border-white/10 text-white/40 hover:border-white/40"
+                          )}>
+                             <input type="checkbox" className="hidden" checked={editForm.archived} onChange={e => setEditForm({...editForm, archived: e.target.checked})} />
                              <Archive size={14} />
                              <span className="text-[10px] font-bold uppercase tracking-widest">Archive</span>
                           </label>
@@ -234,7 +248,7 @@ export default function AdminDashboard() {
                           <button onClick={() => setEditingId(null)} className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white">
                             Cancel
                           </button>
-                          <button onClick={handleSave} className="bg-white px-12 py-4 text-[10px] font-bold uppercase tracking-widest text-black hover:bg-zinc-200 transition-all">
+                          <button onClick={handleSaveProduct} className="bg-white px-12 py-4 text-[10px] font-bold uppercase tracking-widest text-black hover:bg-zinc-200 transition-all">
                             Save Artifact
                           </button>
                         </div>
@@ -250,11 +264,14 @@ export default function AdminDashboard() {
                              <ImageIcon className="text-white/10" />
                            </div>
                          )}
-                         {product.featured && <div className="absolute top-4 left-4 bg-white text-black px-2 py-1 text-[8px] font-bold uppercase tracking-widest">Featured</div>}
+                         <div className="absolute top-4 left-4 flex flex-col gap-2">
+                           {product.featured && <div className="bg-white text-black px-2 py-1 text-[8px] font-bold uppercase tracking-widest">Featured</div>}
+                           {product.archived && <div className="bg-red-500 text-white px-2 py-1 text-[8px] font-bold uppercase tracking-widest">Archived</div>}
+                         </div>
                       </div>
                       <div className="flex-1 flex flex-col justify-center">
                          <span className="text-[10px] uppercase tracking-widest text-white/20 font-bold mb-3">{product.category}</span>
-                         <h3 className="text-5xl font-bold tracking-tighter uppercase leading-none">{product.name}</h3>
+                         <h3 className="text-5xl font-bold tracking-tighter uppercase leading-none text-white">{product.name}</h3>
                          <div className="mt-6 flex items-center gap-6">
                             <span className="text-2xl font-bold text-white/80">${product.price}</span>
                             <div className="h-4 w-[1px] bg-white/10" />
@@ -289,14 +306,15 @@ export default function AdminDashboard() {
              exit={{ opacity: 0, y: -10 }}
              className="max-w-4xl space-y-12"
            >
-              <h2 className="text-2xl font-bold tracking-tighter uppercase">Drop Management</h2>
+              <h2 className="text-2xl font-bold tracking-tighter uppercase text-white">Drop Management</h2>
               <div className="glass p-12 grid grid-cols-1 md:grid-cols-2 gap-12">
                  <div className="space-y-8">
                     <div>
                       <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Drop Identity</label>
                       <input
                         className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none focus:border-white/40 text-lg font-bold"
-                        defaultValue={NEXT_DROP.title}
+                        value={settings.dropTitle}
+                        onChange={e => updateSettings({ dropTitle: e.target.value })}
                       />
                     </div>
                     <div>
@@ -304,30 +322,34 @@ export default function AdminDashboard() {
                       <input
                         type="datetime-local"
                         className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none"
-                        defaultValue={NEXT_DROP.date.split('.')[0]}
+                        value={settings.dropDate.split('.')[0]}
+                        onChange={e => updateSettings({ dropDate: new Date(e.target.value).toISOString() })}
                       />
                     </div>
                     <div className="flex items-center gap-6">
-                       <button className="flex-1 bg-white text-black py-4 text-[10px] font-bold uppercase tracking-[0.5em]">Activate Signal</button>
-                       <button className="flex-1 border border-white/10 text-white/40 py-4 text-[10px] font-bold uppercase tracking-[0.5em] hover:text-white hover:border-white/40 transition-all">Deactivate</button>
+                       <button className="flex-1 bg-white text-black py-4 text-[10px] font-bold uppercase tracking-[0.5em] flex items-center justify-center gap-2">
+                         <Save size={14} /> Update Signal
+                       </button>
                     </div>
                  </div>
                  <div className="space-y-8">
                     <div>
                        <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Teaser Visual</label>
-                       <div className="aspect-video relative overflow-hidden bg-zinc-950 border border-white/10 group cursor-pointer">
-                          <Image src={NEXT_DROP.image} alt="Teaser" fill className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110" />
+                       <label className="aspect-video relative overflow-hidden bg-zinc-950 border border-white/10 group cursor-pointer block">
+                          <input type="file" className="hidden" accept="image/*" onChange={handleDropImageUpload} />
+                          <Image src={settings.dropImage} alt="Teaser" fill className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110" />
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                             <ImageIcon size={32} />
+                             <Upload size={32} className="text-white" />
                           </div>
-                       </div>
+                       </label>
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Short Signal (Description)</label>
                       <textarea
                         rows={3}
                         className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none resize-none leading-relaxed"
-                        defaultValue={NEXT_DROP.description}
+                        value={settings.dropDescription}
+                        onChange={e => updateSettings({ dropDescription: e.target.value })}
                       />
                     </div>
                  </div>
@@ -343,39 +365,25 @@ export default function AdminDashboard() {
              exit={{ opacity: 0, y: -10 }}
              className="max-w-4xl space-y-12"
            >
-              <h2 className="text-2xl font-bold tracking-tighter uppercase">Brand Identity</h2>
+              <h2 className="text-2xl font-bold tracking-tighter uppercase text-white">Brand Identity</h2>
               <div className="glass p-12 space-y-12">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                       <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Hero Headliner</label>
-                      <input className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none font-bold" value={brandSettings.heroText} onChange={e => setBrandSettings({...brandSettings, heroText: e.target.value})} />
+                      <input
+                        className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none font-bold"
+                        value={settings.heroText}
+                        onChange={e => updateSettings({ heroText: e.target.value })}
+                      />
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Intro Cinematic Text</label>
-                      <input className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none" value={brandSettings.introText} onChange={e => setBrandSettings({...brandSettings, introText: e.target.value})} />
+                      <input
+                        className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none"
+                        value={settings.introText}
+                        onChange={e => updateSettings({ introText: e.target.value })}
+                      />
                     </div>
-                 </div>
-
-                 <div>
-                    <label className="text-[10px] uppercase tracking-widest text-white/40 mb-6 block uppercase">Global Signatures</label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                       <div className="p-6 bg-white/5 border border-white/10 rounded-lg">
-                          <span className="text-[9px] uppercase tracking-widest text-white/20 mb-3 block">Signature A</span>
-                          <p className="text-xs font-bold">EST. ADDIS // WORLDWIDE</p>
-                       </div>
-                       <div className="p-6 bg-white/5 border border-white/10 rounded-lg">
-                          <span className="text-[9px] uppercase tracking-widest text-white/20 mb-3 block">Signature B</span>
-                          <p className="text-xs font-bold">BUILT DIFFERENT</p>
-                       </div>
-                       <div className="p-6 bg-white/5 border border-white/10 rounded-lg">
-                          <span className="text-[9px] uppercase tracking-widest text-white/20 mb-3 block">Signature C</span>
-                          <p className="text-xs font-bold">NOCHILL NEVER SLEEPS.</p>
-                       </div>
-                    </div>
-                 </div>
-
-                 <div className="pt-8 flex justify-end">
-                    <button className="bg-white text-black px-12 py-4 text-[10px] font-bold uppercase tracking-[0.5em] hover:bg-zinc-200 transition-all">Update Identity</button>
                  </div>
               </div>
            </motion.div>
@@ -389,50 +397,43 @@ export default function AdminDashboard() {
              exit={{ opacity: 0, y: -10 }}
              className="max-w-4xl space-y-12"
            >
-              <h2 className="text-2xl font-bold tracking-tighter uppercase">CEO Settings</h2>
+              <h2 className="text-2xl font-bold tracking-tighter uppercase text-white">CEO Settings</h2>
               <div className="glass p-12">
                  <div className="flex flex-col md:flex-row gap-12 items-center md:items-start">
                     <div className="w-32 h-32 rounded-full border border-white/20 overflow-hidden relative group cursor-pointer bg-zinc-900 flex items-center justify-center">
                        <User size={40} className="text-white/20" />
                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
-                          <ImageIcon size={20} />
+                          <Upload size={20} className="text-white" />
                        </div>
                     </div>
                     <div className="flex-1 space-y-8 w-full">
                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                           <div>
                             <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Admin Operator</label>
-                            <input className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none font-bold" value={brandSettings.owner} />
+                            <input className="w-full bg-white/5 border border-white/10 p-5 text-white outline-none font-bold" defaultValue="YUNA" readOnly />
                           </div>
                           <div>
                             <label className="text-[10px] uppercase tracking-widest text-white/40 mb-3 block">Store Instance Status</label>
                             <div className="flex items-center gap-4 p-5 bg-white/5 border border-white/10">
                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                               <span className="text-[10px] font-bold uppercase tracking-widest">{brandSettings.storeStatus}</span>
+                               <span className="text-[10px] font-bold uppercase tracking-widest text-white">ACTIVE</span>
                             </div>
                           </div>
                        </div>
 
-                       <div className="space-y-6 pt-4">
-                          <div className="flex items-center justify-between p-6 bg-white/5 border border-white/10">
-                             <div className="space-y-1">
-                                <p className="text-xs font-bold uppercase tracking-widest">Maintenance Mode</p>
-                                <p className="text-[10px] text-white/30 uppercase tracking-widest">Lock access to store for updates</p>
+                       <div className="pt-4">
+                          <label className="flex items-center gap-4 cursor-pointer group">
+                             <div className={cn(
+                               "w-12 h-6 rounded-full p-1 transition-colors",
+                               settings.maintenanceMode ? "bg-red-500" : "bg-zinc-800"
+                             )} onClick={() => updateSettings({ maintenanceMode: !settings.maintenanceMode })}>
+                                <div className={cn(
+                                  "w-4 h-4 rounded-full bg-white transition-transform",
+                                  settings.maintenanceMode ? "translate-x-6" : "translate-x-0"
+                                )} />
                              </div>
-                             <button className="w-16 h-8 bg-zinc-800 rounded-full relative p-1 transition-all">
-                                <div className="w-6 h-6 bg-white/20 rounded-full" />
-                             </button>
-                          </div>
-                          <div className="flex items-center justify-between p-6 bg-white/5 border border-white/10">
-                             <div className="space-y-1">
-                                <p className="text-xs font-bold uppercase tracking-widest">Theme Accent</p>
-                                <p className="text-[10px] text-white/30 uppercase tracking-widest">Current: MONOCHROME</p>
-                             </div>
-                             <div className="flex gap-2">
-                                <div className="w-8 h-8 bg-white border border-white/20 rounded-sm" />
-                                <div className="w-8 h-8 bg-zinc-900 border border-white/20 rounded-sm" />
-                             </div>
-                          </div>
+                             <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 group-hover:text-white">Maintenance Mode</span>
+                          </label>
                        </div>
                     </div>
                  </div>
