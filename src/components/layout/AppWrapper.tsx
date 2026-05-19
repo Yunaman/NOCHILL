@@ -5,12 +5,17 @@ import { ReactLenis } from "lenis/react";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Navbar } from "@/components/layout/Navbar";
 import { Cart } from "@/components/ui/Cart";
+import { SearchModal } from "@/components/ui/SearchModal";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { Particles } from "@/components/ui/Particles";
 import { useSettings } from "@/hooks/useSettings";
+import { useUI } from "@/hooks/useUI";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const { settings } = useSettings();
+  const { isSearchOpen, closeSearch, toggleSearch } = useUI();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -20,8 +25,19 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }, 4500);
 
-    return () => clearTimeout(timer);
-  }, []);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        toggleSearch();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [toggleSearch]);
 
   if (!isMounted) return <div className="bg-black min-h-screen" />;
 
@@ -52,8 +68,11 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
             </div>
           ) : (
             <>
+              <Particles />
+              <CustomCursor />
               <Navbar />
               <Cart />
+              <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
               <main>{children}</main>
             </>
           )}

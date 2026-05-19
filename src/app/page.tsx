@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChromeLogo } from "@/components/three/ChromeLogo";
-import { ProductCard } from "@/components/ui/ProductCard";
+import { ProductShowcase } from "@/components/sections/ProductShowcase";
 import { NextDrop } from "@/components/ui/NextDrop";
 import { useProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
@@ -59,8 +59,6 @@ export default function Home() {
     };
   }, []);
 
-  const featuredProducts = products.filter(p => p.featured && !p.archived);
-
   if (!isMounted) return <div className="min-h-screen bg-black" />;
 
   return (
@@ -111,57 +109,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Showcase Section */}
-      <section className="px-6 py-32 md:px-12 bg-[#050505]">
-        <div className="mb-32 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl">
-            <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Selected Works</span>
-            <h2 className="editorial-heading mt-6 uppercase reveal-text text-white">
-              THE <br /> FEATURED <br /> ARCHIVE.
-            </h2>
-          </div>
-          <div className="md:text-right">
-             <p className="max-w-xs text-[10px] uppercase tracking-[0.2em] text-white/40 leading-relaxed">
-               Hand-picked artifacts from the void. Every piece tells a story of the outsiders.
-             </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-x-8 gap-y-24 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProducts.map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              transition={{ delay: i * 0.1, duration: 1, ease: [0.33, 1, 0.68, 1] }}
-              viewport={{ once: true }}
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
-
-          {/* Decorative Card */}
-          <motion.div
-             initial={{ y: 50, opacity: 0 }}
-             whileInView={{ y: 0, opacity: 1 }}
-             transition={{ delay: 0.3, duration: 1 }}
-             viewport={{ once: true }}
-             className="relative flex flex-col justify-center border border-white/5 p-12 aspect-[3/4]"
-          >
-            <span className="text-[10px] uppercase tracking-[0.8em] text-white/20">Coordinate</span>
-            <h3 className="mt-6 text-4xl font-bold tracking-tighter text-white/60">0.00°N <br /> 38.74°E</h3>
-            <p className="mt-12 text-[10px] uppercase tracking-[0.4em] text-white/10 leading-loose">
-              Born in Addis Ababa. <br />
-              Forged in the shadows. <br />
-              Global emergence imminent.
-            </p>
-            <div className="mt-auto flex justify-between items-center">
-              <div className="h-px w-12 bg-white/10" />
-              <span className="text-[8px] uppercase tracking-[0.5em] text-white/20">No signal</span>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Cinematic Artifact Showcase (Replaces Featured Section) */}
+      <ProductShowcase products={products} />
 
       {/* Next Drop System */}
       <NextDrop />

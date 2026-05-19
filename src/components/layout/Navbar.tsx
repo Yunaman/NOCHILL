@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Search, Home, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/hooks/useCart";
+import { useUI } from "@/hooks/useUI";
 
 const NAV_LINKS = [
   { name: "SHOP", href: "/shop" },
@@ -20,6 +21,7 @@ export function Navbar() {
   const [hovered, setHovered] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toggleCart, items } = useCart();
+  const { toggleSearch } = useUI();
 
   const cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -109,7 +111,7 @@ export function Navbar() {
           {/* Actions */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+              onClick={toggleSearch}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 transition-colors hover:bg-white/10"
             >
               <Search size={14} className="text-white/60" />
