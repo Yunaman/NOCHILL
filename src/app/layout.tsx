@@ -5,12 +5,12 @@ import { AppWrapper } from "@/components/layout/AppWrapper";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+  variable: "--font-nc-display",
   weight: "100 900",
 });
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+  variable: "--font-nc-mono",
   weight: "100 900",
 });
 

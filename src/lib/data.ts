@@ -14,7 +14,7 @@ export const PRODUCTS: Product[] = [
     category: "Hoodies",
     images: [
       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1000",
-      "https://images.unsplash.com/photo-1514332930284-94224a742123?q=80&w=1000"
+      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1000"
     ],
     details: ["500GSM LUXURY COTTON", "DOUBLE-STITCHED SEAMS", "CHROME LOGO EMBROIDERY", "OVERSIZED CINEMATIC FIT"],
     featured: true,
@@ -55,7 +55,7 @@ export const PRODUCTS: Product[] = [
     description: "MINIMALIST LOGO BEANIE. HEAVY RIBBED KNIT. DESIGNED FOR MAXIMUM COMFORT IN LOW-LIGHT ENVIRONMENTS.",
     category: "Accessories",
     images: [
-      "https://images.unsplash.com/photo-1534215754734-18e2973b7d80?q=80&w=1000",
+      "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1000",
       "https://images.unsplash.com/photo-1471466054146-e71bcc0d2bb2?q=80&w=1000"
     ],
     details: ["100% MERINO WOOL", "RIBBED TEXTURE", "SILVER-THREAD EMBROIDERY"],
@@ -83,6 +83,6 @@ export const COLLECTIONS: Collection[] = [
 export const NEXT_DROP: NextDrop = {
   title: "VOID RUNNER // 002",
   date: new Date(Date.now() + 86400000 * 7).toISOString(), // 7 days from now
-  image: "https://images.unsplash.com/photo-1514332930284-94224a742123?q=80&w=1000",
+  image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000",
   description: "THE NEXT EVOLUTION OF THE ARTIFACT COLLECTION. PREPARE FOR DEPLOYMENT."
 };
