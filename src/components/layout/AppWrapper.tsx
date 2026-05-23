@@ -73,7 +73,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
               <Navbar />
               <Cart />
               <SearchModal isOpen={isSearchOpen} onClose={closeSearch} />
-              <main>{children}</main>
+              {children}
             </>
           )}
         </motion.div>
