@@ -97,25 +97,9 @@ const config: Config = {
       //
       // See fonts.ts for next/font/local setup.
       fontFamily: {
-        "nc-display": [
-          "\"Neue Haas Grotesk Display\"",
-          "\"Haas Grot Display\"",
-          "\"Helvetica Neue\"",
-          "\"Arial\"",
-          "sans-serif",
-        ],
-        "nc-mono": [
-          "\"DM Mono\"",
-          "\"Roboto Mono\"",
-          "\"Courier New\"",
-          "monospace",
-        ],
-        "nc-body": [
-          "\"Suisse Int'l\"",
-          "\"Aktiv Grotesk\"",
-          "\"Helvetica Neue\"",
-          "sans-serif",
-        ],
+        "nc-display": ["var(--font-nc-display)", "sans-serif"],
+        "nc-mono": ["var(--font-nc-mono)", "monospace"],
+        "nc-body": ["var(--font-nc-body)", "sans-serif"],
       },
 
       // ── TYPE SCALE ──────────────────────────────────────────────────────────

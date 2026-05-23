@@ -72,11 +72,6 @@
   --nc-overlay-heavy:     rgba(0, 0, 0, 0.84);
   --nc-scrim:             rgba(0, 0, 0, 0.40);
 
-  /* ── Typography ── */
-  --font-nc-display: "Neue Haas Grotesk Display", "Helvetica Neue", sans-serif;
-  --font-nc-mono:    "DM Mono", "Roboto Mono", monospace;
-  --font-nc-body:    "Suisse Int'l", "Helvetica Neue", sans-serif;
-
   /* ── Easing curves ── */
   --nc-ease:          cubic-bezier(0.16, 1, 0.3, 1);
   --nc-ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
