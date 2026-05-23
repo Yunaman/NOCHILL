@@ -71,7 +71,18 @@ export default function ShopPage() {
               key={product.id}
               variants={fadeIn}
             >
-              <ProductCard product={product} />
+              <ProductCard
+                id={product.id}
+                slug={product.id}
+                name={product.name}
+                price={product.price}
+                imageUrl={product.images[0]}
+                imageUrlHover={product.images[1]}
+                dropNumber={1}
+                dropTotal={100}
+                status={product.archived ? "sold" : "live"}
+                collection={product.category}
+              />
             </motion.div>
           ))}
         </motion.div>
