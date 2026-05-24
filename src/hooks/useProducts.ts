@@ -1,41 +1,39 @@
 "use client";
+import { useEffect, useState } from "react";
+import { getProducts } from "@/lib/sanity";
+import { Product } from "@/types";
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { Product } from '@/types';
-import { PRODUCTS as INITIAL_PRODUCTS } from '@/lib/data';
+export function useProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-interface ProductStore {
-  products: Product[];
-  addProduct: (product: Product) => void;
-  updateProduct: (product: Product) => void;
-  removeProduct: (id: string) => void;
-  getProduct: (id: string) => Product | undefined;
+  useEffect(() => {
+    getProducts()
+      .then((data) => {
+        const mapped = data.map((p: any) => ({
+          id: p._id,
+          _id: p._id,
+          name: p.name,
+          price: p.price,
+          description: p.description ?? "",
+          category: p.collection ?? "core",
+          collection: p.collection,
+          images: p.imageUrl ? [p.imageUrl] : [],
+          imageUrl: p.imageUrl,
+          imageUrlHover: p.imageUrlHover,
+          slug: p.slug?.current ?? p.slug,
+          status: p.status ?? "live",
+          dropNumber: p.dropNumber ?? 1,
+          dropTotal: p.dropTotal ?? 100,
+          sizes: p.sizes ?? [],
+          featured: p.featured ?? false,
+          archived: false,
+          details: [],
+        }));
+        setProducts(mapped);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  return { products, loading };
 }
-
-export const useProducts = create<ProductStore>()(
-  persist(
-    (set, get) => ({
-      products: INITIAL_PRODUCTS,
-      addProduct: (product) => {
-        set({ products: [product, ...get().products] });
-      },
-      updateProduct: (updatedProduct) => {
-        set({
-          products: get().products.map((p) =>
-            p.id === updatedProduct.id ? updatedProduct : p
-          ),
-        });
-      },
-      removeProduct: (id) => {
-        set({ products: get().products.filter((p) => p.id !== id) });
-      },
-      getProduct: (id) => {
-        return get().products.find((p) => p.id === id);
-      },
-    }),
-    {
-      name: 'nochill-product-storage',
-    }
-  )
-);

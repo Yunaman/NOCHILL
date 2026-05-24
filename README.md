@@ -1,49 +1,9 @@
-# NOCHILL - Luxury Streetwear Archive
+# Sanity Clean Content Studio
 
-A cinematic, premium ecommerce experience for the underground fashion collective.
+Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
 
-## 🎥 Aesthetic Direction
-- **Cinematic Underground:** Dark monochrome palette, huge bold typography, and editorial layouts.
-- **Atmospheric UI:** Noise/grain overlays, glassmorphism accents, and luxury pacing.
-- **Advanced Motion:** 3D Chrome logo (R3F), GSAP scroll triggers, and Framer Motion transitions.
+Now you can do the following things:
 
-## 🛠 Tech Stack
-- **Framework:** Next.js 15 (React 19 RC)
-- **Styling:** Tailwind CSS
-- **Animations:** GSAP, Framer Motion, Lenis (Smooth Scroll)
-- **3D:** React Three Fiber, Three.js
-- **Language:** TypeScript
-
-## 📂 Architecture
-- `src/app`: App router with editorial routes (Shop, Collections, Archive, Contact).
-- `src/components`: Atomic UI components, Layouts, and 3D elements.
-- `src/hooks`: Custom hooks for scroll and cart logic.
-- `src/lib`: Animation constants, utility functions, and mock data.
-- `src/types`: Centralized TypeScript definitions.
-
-## 🚀 Setup Guide
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-2. **Run development server:**
-   ```bash
-   npm run dev
-   ```
-3. **Build for production:**
-   ```bash
-   npm run build
-   ```
-
-## 🌐 Deployment (Vercel)
-1. Push your code to GitHub.
-2. Import the project in [Vercel](https://vercel.com).
-3. The configuration is standard Next.js; no special environment variables are required for the initial setup.
-
-## 🕶 Design Language
-- **Colors:** `#000000` (Background), `#FFFFFF` (Primary), `rgba(255,255,255,0.05)` (Glass).
-- **Typography:** Inter (Sans), custom huge headers (Editorial).
-- **Brand Identity:** Coordinates (London), Status (No Signal), Drop 001.
-
----
-Built for the outsiders.
+- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
+- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
+- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
