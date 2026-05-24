@@ -1,118 +1,612 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   NOCHILL — globals.css
+   Cinematic luxury streetwear. Dark monochrome. Editorial. Underground.
+
+   Load order:
+     1. @tailwind directives
+     2. CSS custom properties (design tokens as CSS vars)
+     3. Base resets & typography
+     4. Global utility classes
+     5. Animation / motion layer
+   ───────────────────────────────────────────────────────────────────────────── */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ── DESIGN TOKENS as CSS Custom Properties ──────────────────────────────────
+   These mirror tailwind.config.ts so they can be accessed in:
+   - Inline styles            (style={{ color: "var(--nc-white-48)" }})
+   - GSAP animations          (gsap.to(el, { "--nc-progress": "1" }))
+   - CSS calc() expressions   (height: calc(100dvh - var(--nc-nav-h)))
+   - Framer motion variants   (initial: { opacity: 0 })
+   ─────────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
+  /* ── Colour tokens ── */
+  --nc-black:        #000000;
+  --nc-white:        #FFFFFF;
+
+  /* Zinc surface hierarchy */
+  --nc-zinc-950:     #080808;
+  --nc-zinc-900:     #0F0F0F;
+  --nc-zinc-800:     #161616;
+  --nc-zinc-700:     #1F1F1F;
+  --nc-zinc-600:     #2A2A2A;
+  --nc-zinc-500:     #3A3A3A;
+  --nc-zinc-400:     #555555;
+  --nc-zinc-300:     #888888;
+  --nc-zinc-200:     #AAAAAA;
+  --nc-zinc-100:     #D4D4D4;
+
+  /* Alpha white tokens */
+  --nc-white-2:      rgba(255, 255, 255, 0.02);
+  --nc-white-4:      rgba(255, 255, 255, 0.04);
+  --nc-white-6:      rgba(255, 255, 255, 0.06);
+  --nc-white-8:      rgba(255, 255, 255, 0.08);
+  --nc-white-10:     rgba(255, 255, 255, 0.10);
+  --nc-white-16:     rgba(255, 255, 255, 0.16);
+  --nc-white-24:     rgba(255, 255, 255, 0.24);
+  --nc-white-32:     rgba(255, 255, 255, 0.32);
+  --nc-white-48:     rgba(255, 255, 255, 0.48);
+  --nc-white-64:     rgba(255, 255, 255, 0.64);
+  --nc-white-80:     rgba(255, 255, 255, 0.80);
+
+  /* Signal — the one accent */
+  --nc-signal:       #F5F5F0;
+  --nc-signal-warm:  #E8E4DC;
+  --nc-signal-hot:   #FFFFFF;
+  --nc-signal-dim:   rgba(245, 245, 240, 0.12);
+
+  /* Status */
+  --nc-live:         #4ADE80;
+  --nc-low:          #F59E0B;
+  --nc-sold:         #EF4444;
+
+  /* ── Glass tokens ── */
+  --nc-glass-bg:          rgba(255, 255, 255, 0.04);
+  --nc-glass-bg-elevated: rgba(255, 255, 255, 0.08);
+  --nc-glass-bg-heavy:    rgba(255, 255, 255, 0.14);
+  --nc-glass-border:      rgba(255, 255, 255, 0.10);
+  --nc-glass-border-hover:rgba(255, 255, 255, 0.20);
+  --nc-overlay:           rgba(0, 0, 0, 0.64);
+  --nc-overlay-heavy:     rgba(0, 0, 0, 0.84);
+  --nc-scrim:             rgba(0, 0, 0, 0.40);
+
+  /* ── Typography ── */
+  --font-nc-display: "Neue Haas Grotesk Display", "Helvetica Neue", sans-serif;
+  --font-nc-mono:    "DM Mono", "Roboto Mono", monospace;
+  --font-nc-body:    "Suisse Int'l", "Helvetica Neue", sans-serif;
+
+  /* ── Easing curves ── */
+  --nc-ease:          cubic-bezier(0.16, 1, 0.3, 1);
+  --nc-ease-out:      cubic-bezier(0.0, 0.0, 0.2, 1);
+  --nc-ease-sharp:    cubic-bezier(0.76, 0, 0.24, 1);
+  --nc-ease-spring:   cubic-bezier(0.34, 1.36, 0.64, 1);
+  --nc-ease-cinematic:cubic-bezier(0.22, 0, 0.36, 1);
+
+  /* ── Duration ── */
+  --nc-dur-fast:    150ms;
+  --nc-dur-quick:   250ms;
+  --nc-dur-base:    400ms;
+  --nc-dur-slow:    600ms;
+  --nc-dur-enter:   800ms;
+  --nc-dur-lazy:    1000ms;
+  --nc-dur-film:    1400ms;
+  --nc-dur-epic:    2000ms;
+
+  /* ── Layout ── */
+  --nc-nav-h:       60px;          /* fixed nav height */
+  --nc-gutter:      clamp(20px, 4vw, 80px);
+  --nc-content-max: 1440px;
+  --nc-grid-gap:    clamp(12px, 2vw, 24px);
+
+  /* ── Z-layers ── */
+  --z-base:      0;
+  --z-raised:    10;
+  --z-dropdown:  100;
+  --z-sticky:    200;
+  --z-overlay:   300;
+  --z-drawer:    400;
+  --z-modal:     500;
+  --z-toast:     600;
+  --z-cursor:    9999;
 }
 
+/* ── BASE RESET ──────────────────────────────────────────────────────────────
+   Minimal, opinionated reset. Tailwind's preflight handles the rest.
+   ─────────────────────────────────────────────────────────────────────────── */
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    /* Smooth scrolling — Lenis overrides this at runtime, but this is the
+       fallback for users with prefers-reduced-motion and JS disabled. */
+    scroll-behavior: auto;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
+  }
+
   body {
-    color: var(--foreground);
-    background: var(--background);
-    font-family: var(--font-geist-sans), Arial, sans-serif;
-    overflow-x: hidden;
+    background-color: var(--nc-zinc-950);
+    color: var(--nc-zinc-100);
+    font-family: var(--font-nc-body);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: 0em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Disable double-tap zoom on mobile (doesn't affect pinch-zoom) */
+    touch-action: manipulation;
+
+    /* Prevent horizontal overflow from animations */
+    overflow-x: hidden;
   }
 
-  /* Animated Grain overlay - subtle moving grain */
-  body::before {
-    content: "";
-    position: fixed;
-    top: -150%;
-    left: -150%;
-    width: 300%;
-    height: 300%;
-    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-    opacity: 0.04;
-    pointer-events: none;
-    z-index: 50; /* Lower than navbar and custom cursor */
-    animation: grain 8s steps(10) infinite;
+  /* All images default to block and object-cover */
+  img, video {
+    display: block;
+    max-width: 100%;
   }
 
-  /* Cinematic Vignette - minimal and elegant */
-  body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.6) 100%);
-    pointer-events: none;
-    z-index: 40;
+  /* Links inherit color by default */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Buttons inherit font */
+  button {
+    font: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  /* Remove list styles */
+  ul, ol {
+    list-style: none;
+  }
+
+  /* ── Typography defaults ── */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-nc-display);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Code / pre */
+  code, pre, kbd, samp {
+    font-family: var(--font-nc-mono);
+    font-size: 0.9em;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #FFFFFF;
+  }
+
+  /* Focus visible — replace default outline with NOCHILL style */
+  :focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.40);
+    outline-offset: 3px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--nc-zinc-600);
+    border-radius: 1px;
+  }
+
+  /* Reduced motion — pause all animations */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration:        0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration:       0.01ms !important;
+    }
   }
 }
 
-@keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
-}
-
+/* ── TYPOGRAPHY UTILITIES ────────────────────────────────────────────────────
+   Semantic text classes for consistent usage across components.
+   ─────────────────────────────────────────────────────────────────────────── */
 @layer components {
-  .glass {
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+  /* Display / Hero */
+  .type-hero {
+    font-family: var(--font-nc-display);
+    font-size: clamp(72px, 13vw, 200px);
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  .text-huge {
-    @apply text-6xl md:text-[12rem] lg:text-[18rem] font-bold leading-[0.8] tracking-tighter;
+  .type-display {
+    font-family: var(--font-nc-display);
+    font-size: clamp(48px, 8.5vw, 130px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .editorial-heading {
-    @apply text-4xl md:text-7xl lg:text-9xl font-bold tracking-tight leading-none;
+  .type-title {
+    font-family: var(--font-nc-display);
+    font-size: clamp(32px, 5vw, 80px);
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .cinematic-shadow {
-    box-shadow: 0 0 50px rgba(255, 255, 255, 0.03);
+  .type-heading {
+    font-family: var(--font-nc-display);
+    font-size: clamp(22px, 3vw, 48px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+  }
+
+  .type-subhead {
+    font-family: var(--font-nc-body);
+    font-size: clamp(16px, 2vw, 28px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+  }
+
+  /* Body */
+  .type-body-lg {
+    font-family: var(--font-nc-body);
+    font-size: 18px;
+    line-height: 1.65;
+    letter-spacing: -0.005em;
+    font-weight: 400;
+  }
+
+  .type-body {
+    font-family: var(--font-nc-body);
+    font-size: 15px;
+    line-height: 1.60;
+    font-weight: 400;
+  }
+
+  .type-body-sm {
+    font-family: var(--font-nc-body);
+    font-size: 13px;
+    line-height: 1.55;
+    letter-spacing: 0.005em;
+    font-weight: 400;
+    color: var(--nc-zinc-200);
+  }
+
+  /* Mono / UI labels */
+  .type-label {
+    font-family: var(--font-nc-mono);
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    font-weight: 500;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .type-caption {
+    font-family: var(--font-nc-mono);
+    font-size: 10px;
+    line-height: 1.4;
+    letter-spacing: 0.18em;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--nc-zinc-300);
+  }
+
+  .type-micro {
+    font-family: var(--font-nc-mono);
+    font-size: 9px;
+    line-height: 1.3;
+    letter-spacing: 0.22em;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--nc-zinc-300);
   }
 }
 
-/* Lenis smooth scroll */
-html.lenis,
-html.lenis body {
-  height: auto;
+/* ── GLOBAL COMPONENT CLASSES ────────────────────────────────────────────────
+   Reusable structural patterns. Applied via className in JSX.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Layout container */
+  .nc-container {
+    width: 100%;
+    max-width: var(--nc-content-max);
+    margin-inline: auto;
+    padding-inline: var(--nc-gutter);
+  }
+
+  /* Full bleed section */
+  .nc-section {
+    padding-block: clamp(80px, 10vw, 160px);
+  }
+
+  /* ── Glass surfaces ── */
+  .nc-glass {
+    background: var(--nc-glass-bg);
+    border: 0.5px solid var(--nc-glass-border);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  }
+
+  .nc-glass-elevated {
+    background: var(--nc-glass-bg-elevated);
+    border: 0.5px solid var(--nc-glass-border-hover);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  }
+
+  .nc-glass-heavy {
+    background: var(--nc-glass-bg-heavy);
+    border: 0.5px solid rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(32px) saturate(1.6);
+    -webkit-backdrop-filter: blur(32px) saturate(1.6);
+  }
+
+  /* ── Cards ── */
+  .nc-card {
+    background: var(--nc-zinc-900);
+    border: 0.5px solid var(--nc-zinc-800);
+    transition:
+      border-color var(--nc-dur-base) var(--nc-ease),
+      background   var(--nc-dur-base) var(--nc-ease);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nc-card:hover {
+      border-color: var(--nc-zinc-600);
+    }
+  }
+
+  /* ── Buttons ── */
+  .nc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-nc-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    border: 0.5px solid var(--nc-white-16);
+    background: transparent;
+    color: var(--nc-white-80);
+    transition: all var(--nc-dur-base) var(--nc-ease);
+    cursor: pointer;
+    -webkit-font-smoothing: antialiased;
+    white-space: nowrap;
+
+    /* Tap feedback */
+    &:active {
+      transform: scale(0.97);
+      transition-duration: var(--nc-dur-fast);
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nc-btn:hover {
+      background: var(--nc-white-6);
+      border-color: var(--nc-white-32);
+      color: var(--nc-white);
+    }
+  }
+
+  .nc-btn-primary {
+    background: var(--nc-white);
+    border-color: var(--nc-white);
+    color: var(--nc-black);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nc-btn-primary:hover {
+      background: var(--nc-white-80);
+      border-color: var(--nc-white-80);
+    }
+  }
+
+  /* ── Dividers ── */
+  .nc-divider {
+    border: none;
+    border-top: 0.5px solid var(--nc-zinc-800);
+  }
+
+  .nc-divider-bright {
+    border: none;
+    border-top: 0.5px solid var(--nc-zinc-600);
+  }
+
+  /* ── Status indicators ── */
+  .nc-status-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-nc-mono);
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--nc-live);
+
+    &::before {
+      content: "";
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--nc-live);
+      animation: nc-pulse-signal 2s ease-in-out infinite;
+    }
+  }
+
+  /* ── Marquee track ── */
+  .nc-marquee-track {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .nc-marquee-inner {
+    display: flex;
+    animation: nc-marquee 24s linear infinite;
+    will-change: transform;
+  }
+
+  /* Pause on hover */
+  @media (hover: hover) and (pointer: fine) {
+    .nc-marquee-track:hover .nc-marquee-inner {
+      animation-play-state: paused;
+    }
+  }
+
+  /* ── Skip link (accessibility) ── */
+  .nc-skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+
+    &:focus {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      width: auto;
+      height: auto;
+      padding: 12px 20px;
+      background: var(--nc-white);
+      color: var(--nc-black);
+      font-family: var(--font-nc-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      z-index: var(--z-cursor);
+    }
+  }
 }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+/* ── GLOBAL ANIMATION UTILITIES ──────────────────────────────────────────────
+   Applied as className — GSAP will override with ScrollTrigger values,
+   but these define the initial (hidden) and final (visible) states.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Initial hidden states for GSAP reveals */
+  .nc-hidden-up {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .nc-hidden-clip {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  .nc-hidden-fade {
+    opacity: 0;
+  }
+
+  /* Visible states (GSAP animates to these) */
+  .nc-visible {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0% 0 0 0);
+  }
+
+  /* Will-change — apply before GSAP fires, remove after */
+  .nc-will-transform {
+    will-change: transform;
+  }
+
+  .nc-will-opacity {
+    will-change: opacity;
+  }
+
+  /* Grain overlay pseudo-element */
+  .nc-grain {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -200%;
+      width: 400%;
+      height: 400%;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+      animation: nc-grain 0.5s steps(1) infinite;
+    }
+  }
+
+  /* Safe area padding for mobile */
+  .nc-pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nc-pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Hide scrollbar, keep scroll */
+  .nc-no-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /* Touch-safe text select (prevent accidental selection on swipe) */
+  .nc-no-select {
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
 
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
 
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
 
-::-webkit-scrollbar-track {
-  background: #000000;
-}
 
-::-webkit-scrollbar-thumb {
-  background: #222222;
-  border-radius: 2px;
-}
 
-::-webkit-scrollbar-thumb:hover {
-  background: #333333;
-}
+
+
+
+
+
+
+
