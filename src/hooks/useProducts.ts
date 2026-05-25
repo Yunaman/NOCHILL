@@ -8,7 +8,7 @@ export function useProducts() {
 
   useEffect(() => {
     fetch(
-      `https://sy9av61t.api.sanity.io/v2024-01-01/data/query/production?query=*[_type=="product"]{_id,name,slug,status,price,collection,dropNumber,dropTotal,featured,description,sizes,"imageUrl":images[0].asset->url,"imageUrlHover":images[1].asset->url}`
+      `https://1cly5ldq.api.sanity.io/v2024-01-01/data/query/production?query=*[_type=="product"]{_id,name,slug,status,price,collection,dropNumber,dropTotal,featured,description,sizes,"imageUrl":images[0].asset->url,"imageUrlHover":images[1].asset->url}`
     )
       .then((r) => r.json())
       .then(({ result }) => {
