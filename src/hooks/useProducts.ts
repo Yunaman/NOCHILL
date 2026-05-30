@@ -1,41 +1,41 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Product } from "@/types";
+import { supabase } from "@/lib/supabase";
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(
-      `https://1cly5ldq.api.sanity.io/v2024-01-01/data/query/production?query=*[_type=="product"]{_id,name,slug,status,price,collection,dropNumber,dropTotal,featured,description,sizes,"imageUrl":images[0].asset->url,"imageUrlHover":images[1].asset->url}`
-    )
-      .then((r) => r.json())
-      .then(({ result }) => {
-        const mapped = (result || []).map((p: any) => ({
-          id: p._id,
-          _id: p._id,
+    supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) console.error(error);
+        const mapped = (data || []).map((p) => ({
+          id: p.id,
           name: p.name,
           price: p.price,
           description: p.description ?? "",
           category: p.collection ?? "core",
           collection: p.collection,
-          images: p.imageUrl ? [p.imageUrl] : [],
-          imageUrl: p.imageUrl,
-          imageUrlHover: p.imageUrlHover,
-          slug: p.slug?.current ?? p.slug,
+          images: p.image_url ? [p.image_url] : [],
+          imageUrl: p.image_url,
+          imageUrlHover: p.image_url_hover,
+          slug: p.slug,
           status: p.status ?? "live",
-          dropNumber: p.dropNumber ?? 1,
-          dropTotal: p.dropTotal ?? 100,
+          dropNumber: p.drop_number ?? 1,
+          dropTotal: p.drop_total ?? 100,
           sizes: p.sizes ?? [],
           featured: p.featured ?? false,
           archived: false,
           details: [],
         }));
         setProducts(mapped);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+        setLoading(false);
+      });
   }, []);
 
   return { products, loading };
