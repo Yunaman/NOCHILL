@@ -72,10 +72,13 @@
   --nc-overlay-heavy:     rgba(0, 0, 0, 0.84);
   --nc-scrim:             rgba(0, 0, 0, 0.40);
 
-  /* ── Typography ── */
-  --font-nc-display: "Neue Haas Grotesk Display", "Helvetica Neue", sans-serif;
-  --font-nc-mono:    "DM Mono", "Roboto Mono", monospace;
-  --font-nc-body:    "Suisse Int'l", "Helvetica Neue", sans-serif;
+  /* ── Typography ──
+     The --font-nc-display / --font-nc-mono / --font-nc-body custom properties
+     are injected onto <html> by next/font (see src/lib/fonts.ts):
+       display → Bebas Neue · mono → DM Mono · body → Outfit
+     next/font ships its own size-adjusted fallback inside each variable, so we
+     intentionally do NOT redeclare them here (doing so would shadow the loaded
+     fonts and force the system fallback). */
 
   /* ── Easing curves ── */
   --nc-ease:          cubic-bezier(0.16, 1, 0.3, 1);
@@ -594,6 +597,53 @@
   .nc-no-select {
     -webkit-user-select: none;
     user-select: none;
+  }
+}
+
+/* ── COMPATIBILITY / SEMANTIC ALIASES ────────────────────────────────────────
+   These classes are referenced throughout the pages and components. They map
+   the page-level vocabulary onto the canonical design system (the `.type-*`
+   scale and the glass tokens) so the editorial typography and glass surfaces
+   actually render. Prefer the `.type-*` utilities for new work.
+   ─────────────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Massive editorial display — hero titles, section landmarks */
+  .text-huge {
+    font-family: var(--font-nc-display);
+    font-size: clamp(72px, 13vw, 200px);
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Aggressive fashion sub-display — editorial section headings */
+  .editorial-heading {
+    font-family: var(--font-nc-display);
+    font-size: clamp(48px, 8.5vw, 130px);
+    line-height: 0.92;
+    letter-spacing: -0.015em;
+    font-weight: 500;
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Glass surface — alias of .nc-glass for existing markup */
+  .glass {
+    background: var(--nc-glass-bg);
+    border: 0.5px solid var(--nc-glass-border);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  }
+
+  /* Cinematic elevation — deep, soft shadow with a faint chrome rim */
+  .cinematic-shadow {
+    box-shadow:
+      0 40px 80px -24px rgba(0, 0, 0, 0.85),
+      0 8px 24px -12px rgba(0, 0, 0, 0.6),
+      0 0 0 0.5px rgba(255, 255, 255, 0.06);
   }
 }
 

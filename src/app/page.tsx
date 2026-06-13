@@ -71,7 +71,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 6, duration: 2 }}
+            transition={{ delay: 0.3, duration: 1.6 }}
             className="mb-6 flex flex-col items-center gap-2"
           >
             <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Drop 001 // Archive</span>
@@ -89,7 +89,7 @@ export default function Home() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 7, duration: 1 }}
+            transition={{ delay: 0.6, duration: 1 }}
             className="mt-12 text-sm font-bold tracking-[0.6em] md:text-xl text-white/60"
           >
             EST. ADDIS // WORLDWIDE

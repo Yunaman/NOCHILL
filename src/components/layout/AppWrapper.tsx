@@ -6,6 +6,7 @@ import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Navbar } from "@/components/layout/Navbar";
 import { Cart } from "@/components/ui/Cart";
 import { useSettings } from "@/hooks/useSettings";
+import { INTRO_DURATION_MS } from "@/lib/tokens";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
@@ -15,10 +16,11 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setIsMounted(true);
-    // Force a slightly longer loading for the cinematic feel
+    // AppWrapper is the single owner of the intro timing. When it elapses, the
+    // loader exit-animates out (AnimatePresence) and the site reveals.
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 4500);
+    }, INTRO_DURATION_MS);
 
     return () => clearTimeout(timer);
   }, []);
