@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useDeviceCapabilities } from "@/hooks/useDeviceCapabilities";
 
 interface MagneticButtonProps {
   children: React.ReactNode;
@@ -13,9 +14,11 @@ interface MagneticButtonProps {
 export function MagneticButton({ children, className, onClick }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const { hasFinePointer, prefersReducedMotion } = useDeviceCapabilities();
+  const enabled = hasFinePointer && !prefersReducedMotion;
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (!enabled || !ref.current) return;
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);

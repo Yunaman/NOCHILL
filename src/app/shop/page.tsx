@@ -3,9 +3,10 @@
 import { ProductCard } from "@/components/ui/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import { motion } from "framer-motion";
-import { fadeIn, staggerContainer } from "@/lib/animations";
+import { fadeIn } from "@/lib/animations";
 import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { ease } from "@/lib/tokens";
 
 const CATEGORIES = ["All", "Hoodies", "Tees", "Jackets", "Pants", "Headwear", "Accessories"];
 
@@ -60,21 +61,24 @@ export default function ShopPage() {
       </header>
 
       {filteredProducts.length > 0 ? (
-        <motion.div
-          className="grid grid-cols-1 gap-x-8 gap-y-24 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-          initial="initial"
-          animate="animate"
-          variants={staggerContainer}
-        >
-          {filteredProducts.map((product) => (
+        <div className="grid grid-cols-1 gap-x-8 gap-y-24 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredProducts.map((product, i) => (
             <motion.div
               key={product.id}
-              variants={fadeIn}
+              initial={{ y: 60, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{
+                duration: 1,
+                ease: ease.nc,
+                // Stagger within a row (cap so off-screen rows don't lag).
+                delay: (i % 4) * 0.08,
+              }}
             >
               <ProductCard product={product} />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       ) : (
         <div className="py-40 text-center">
            <p className="text-[10px] uppercase tracking-[0.6em] text-white/20">No signals found in this category.</p>

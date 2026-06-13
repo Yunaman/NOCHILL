@@ -41,8 +41,17 @@ export function Cart() {
               <div className="flex-1 overflow-y-auto py-8 custom-scrollbar">
                 {items.length > 0 ? (
                   <div className="space-y-8">
+                    <AnimatePresence initial={false}>
                     {items.map((item) => (
-                      <div key={`${item.id}-${item.selectedSize}`} className="flex gap-6 border-b border-white/5 pb-8">
+                      <motion.div
+                        key={`${item.id}-${item.selectedSize}`}
+                        layout
+                        initial={{ opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 24, height: 0, marginBottom: 0 }}
+                        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                        className="flex gap-6 border-b border-white/5 pb-8"
+                      >
                         <div className="relative aspect-[3/4] w-24 overflow-hidden bg-zinc-900 border border-white/5">
                           <Image
                             src={item.images[0]}
@@ -86,8 +95,9 @@ export function Cart() {
                             </button>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
+                    </AnimatePresence>
                   </div>
                 ) : (
                   <div className="flex h-full flex-col items-center justify-center text-center">
