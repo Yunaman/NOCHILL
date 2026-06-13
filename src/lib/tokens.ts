@@ -214,6 +214,12 @@ export const motion = {
   },
 } as const;
 
+// ── INTRO / LOADING SEQUENCE ─────────────────────────────────────────────────
+// Single source of truth for the cinematic intro length. Drives the loading
+// screen progress bar AND the moment the homepage/navbar are revealed, so the
+// two never disagree (previously the wrapper cut the loader off mid-animation).
+export const INTRO_DURATION_MS = 4000;
+
 // ── BREAKPOINTS (mirrors tailwind.config.ts screens) ─────────────────────────
 // For use in JS logic (window.matchMedia, GSAP ScrollTrigger, etc.)
 export const breakpoint = {

@@ -29,7 +29,7 @@ export function Navbar() {
         <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 5.5, duration: 1, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ delay: 0.3, duration: 1, ease: [0.76, 0, 0.24, 1] }}
           className="glass relative flex items-center justify-between gap-2 rounded-full px-4 py-2 backdrop-blur-2xl md:gap-8 md:px-8 md:py-3 border border-white/5"
         >
           {/* Home / Signature */}

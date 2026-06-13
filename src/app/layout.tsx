@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
+import { fontDisplay, fontMono, fontBody } from "@/lib/fonts";
 import { AppWrapper } from "@/components/layout/AppWrapper";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: "NOCHILL | BUILT FOR THE OUTSIDERS",
@@ -25,10 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      className={`${fontDisplay.variable} ${fontMono.variable} ${fontBody.variable}`}
+    >
+      <body className="antialiased">
         <AppWrapper>
           {children}
         </AppWrapper>
