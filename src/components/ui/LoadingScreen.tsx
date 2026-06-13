@@ -115,15 +115,26 @@ export function LoadingScreen() {
       className="fixed inset-0 z-[100001] bg-black"
     >
       <div className="relative h-full w-full">
-        <Canvas
-          shadows
-          dpr={[1, 2]} // Performance optimization
-          gl={{ antialias: true, alpha: false }}
+        {/* Subtle cinematic push-in on the 3D logo for a film-like opening */}
+        <motion.div
+          className="absolute inset-0"
+          initial={{ scale: 1.12, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: INTRO_DURATION_MS / 1000, ease: [0.16, 1, 0.3, 1] }}
         >
-          <Scene />
-        </Canvas>
+          <Canvas
+            shadows
+            dpr={[1, 2]} // Performance optimization
+            gl={{ antialias: true, alpha: false }}
+          >
+            <Scene />
+          </Canvas>
+        </motion.div>
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-60" />
+
+        {/* Cinematic vignette — darkens the edges for depth */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.7)_100%)]" />
 
         <motion.div
           initial={{ opacity: 0 }}

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ChromeLogo } from "@/components/three/ChromeLogo";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { NextDrop } from "@/components/ui/NextDrop";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { useProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import gsap from "gsap";
@@ -212,18 +213,20 @@ export default function Home() {
       {/* CTA Section */}
       <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-zinc-100 text-black">
         <h2 className="text-huge text-center reveal-text">ENTER THE VOID</h2>
-        <Link
-          href="/shop"
-          className="mt-16 group relative overflow-hidden bg-black text-white px-16 py-6"
-        >
-          <span className="relative z-10 text-xs font-bold tracking-[0.5em] uppercase">Join Us</span>
-          <motion.div
-             className="absolute inset-0 bg-zinc-800"
-             initial={{ x: "-100%" }}
-             whileHover={{ x: 0 }}
-             transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-          />
-        </Link>
+        <MagneticButton className="mt-16">
+          <Link
+            href="/shop"
+            className="group relative block overflow-hidden bg-black text-white px-16 py-6"
+          >
+            <span className="relative z-10 text-xs font-bold tracking-[0.5em] uppercase">Join Us</span>
+            <motion.div
+               className="absolute inset-0 bg-zinc-800"
+               initial={{ x: "-100%" }}
+               whileHover={{ x: 0 }}
+               transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+            />
+          </Link>
+        </MagneticButton>
 
         <div className="absolute bottom-12 flex flex-col md:flex-row gap-8 md:gap-32 text-center">
           <span className="text-[10px] font-bold uppercase tracking-[0.5em]">Worldwide membership</span>

@@ -5,6 +5,9 @@ import { ReactLenis } from "lenis/react";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Navbar } from "@/components/layout/Navbar";
 import { Cart } from "@/components/ui/Cart";
+import { CustomCursor } from "@/components/ui/CustomCursor";
+import { Atmosphere } from "@/components/ui/Atmosphere";
+import { PageTransition } from "@/components/ui/PageTransition";
 import { useSettings } from "@/hooks/useSettings";
 import { INTRO_DURATION_MS } from "@/lib/tokens";
 import { motion, AnimatePresence } from "framer-motion";
@@ -54,9 +57,13 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
             </div>
           ) : (
             <>
+              <Atmosphere />
+              <CustomCursor />
               <Navbar />
               <Cart />
-              <main>{children}</main>
+              <main>
+                <PageTransition>{children}</PageTransition>
+              </main>
             </>
           )}
         </motion.div>

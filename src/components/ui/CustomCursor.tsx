@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, useSpring, useMotionValue, useTransform, MotionValue } from "framer-motion";
+import { useDeviceCapabilities } from "@/hooks/useDeviceCapabilities";
 
 const LETTERS = "NOCHILL".split("");
 
@@ -12,11 +13,12 @@ const LETTERS = "NOCHILL".split("");
  * - Letters follow cursor with staggered spring delays.
  * - Each letter follows the one before it to create a true trail.
  * - Spacing between letters stretches based on mouse velocity.
- * - Desktop only (hidden on mobile).
+ * - Desktop / fine-pointer only; auto-disabled on touch + reduced-motion.
  */
 export function CustomCursor() {
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const { hasFinePointer, prefersReducedMotion } = useDeviceCapabilities();
+  const enabled = hasFinePointer && !prefersReducedMotion;
 
   // Base mouse position
   const mouseX = useMotionValue(-100);
@@ -63,9 +65,7 @@ export function CustomCursor() {
   ];
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    if (!enabled) return;
 
     const moveMouse = (e: MouseEvent) => {
       if (!isVisible) setIsVisible(true);
@@ -94,14 +94,13 @@ export function CustomCursor() {
     document.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
-      window.removeEventListener("resize", checkMobile);
       window.removeEventListener("mousemove", moveMouse);
       document.removeEventListener("mouseleave", handleMouseLeave);
       document.removeEventListener("mouseenter", handleMouseEnter);
     };
-  }, [mouseX, mouseY, isVisible, velocity]);
+  }, [mouseX, mouseY, isVisible, velocity, enabled]);
 
-  if (isMobile) return null;
+  if (!enabled) return null;
 
   return (
     <div
