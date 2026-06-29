@@ -519,6 +519,18 @@
       z-index: var(--z-cursor);
     }
   }
+
+  /* ── Custom cursor (desktop only) ── */
+  @media (min-width: 768px) {
+    body {
+      cursor: none;
+    }
+    
+    /* Show default cursor on interactive elements */
+    a, button, input, textarea, select {
+      cursor: none;
+    }
+  }
 }
 
 /* ── GLOBAL ANIMATION UTILITIES ──────────────────────────────────────────────
