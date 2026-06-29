@@ -9,7 +9,6 @@ import { useProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
 import Image from "next/image";
 import Link from "next/link";
-import { fadeIn } from "@/lib/animations";
 
 export default function Home() {
   const { products } = useProducts();
@@ -189,7 +188,7 @@ export default function Home() {
             <div className="absolute top-8 right-8 mix-blend-difference">
                <span className="text-[10px] font-bold uppercase tracking-widest text-white/60">001 / VOID</span>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { fontDisplay, fontMono, fontBody } from "@/lib/fonts";
 import { AppWrapper } from "@/components/layout/AppWrapper";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 
 export const metadata: Metadata = {
   title: "NOCHILL | BUILT FOR THE OUTSIDERS",
@@ -32,6 +33,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <CustomCursor />
         <AppWrapper>
           <main id="main-content">
             {children}
