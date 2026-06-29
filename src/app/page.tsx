@@ -1,62 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ChromeLogo } from "@/components/three/ChromeLogo";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { NextDrop } from "@/components/ui/NextDrop";
 import { useProducts } from "@/hooks/useProducts";
 import { useSettings } from "@/hooks/useSettings";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import Link from "next/link";
-
-gsap.registerPlugin(ScrollTrigger);
+import { fadeIn } from "@/lib/animations";
 
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const philosophyRef = useRef<HTMLDivElement>(null);
   const { products } = useProducts();
   const { settings } = useSettings();
   const [isMounted, setIsMounted] = useState(false);
+  const { scrollYProgress } = useScroll();
+
+  const parallaxY = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   useEffect(() => {
     setIsMounted(true);
-    const titles = document.querySelectorAll(".reveal-text");
-    titles.forEach((title) => {
-      gsap.fromTo(
-        title,
-        { y: 100, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.5,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: title,
-            start: "top 90%",
-          },
-        }
-      );
-    });
-
-    const parallaxImages = document.querySelectorAll(".parallax-image");
-    parallaxImages.forEach((img) => {
-      gsap.to(img, {
-        y: -100,
-        ease: "none",
-        scrollTrigger: {
-          trigger: img,
-          scrub: true,
-        },
-      });
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
   }, []);
 
   const featuredProducts = products.filter(p => p.featured && !p.archived);
@@ -64,9 +28,9 @@ export default function Home() {
   if (!isMounted) return <div className="min-h-screen bg-black" />;
 
   return (
-    <div ref={containerRef} className="relative bg-black">
+    <div className="relative bg-black">
       {/* Hero Section */}
-      <section ref={heroRef} className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden">
         <div className="z-10 text-center">
           <motion.div
             initial={{ opacity: 0 }}
@@ -82,9 +46,14 @@ export default function Home() {
             <ChromeLogo />
           </div>
 
-          <div className="mt-8 overflow-hidden">
-             <h1 className="text-huge reveal-text">{settings.heroText}</h1>
-          </div>
+          <motion.div 
+            className="mt-8 overflow-hidden"
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+             <h1 className="text-huge">{settings.heroText}</h1>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
@@ -116,9 +85,15 @@ export default function Home() {
         <div className="mb-32 flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="max-w-2xl">
             <span className="text-[10px] uppercase tracking-[0.8em] text-white/40">Selected Works</span>
-            <h2 className="editorial-heading mt-6 uppercase reveal-text text-white">
+            <motion.h2 
+              className="editorial-heading mt-6 uppercase text-white"
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            >
               THE <br /> FEATURED <br /> ARCHIVE.
-            </h2>
+            </motion.h2>
           </div>
           <div className="md:text-right">
              <p className="max-w-xs text-[10px] uppercase tracking-[0.2em] text-white/40 leading-relaxed">
@@ -167,12 +142,18 @@ export default function Home() {
       <NextDrop />
 
       {/* Philosophy Section */}
-      <section ref={philosophyRef} className="relative min-h-screen px-6 py-32 md:px-24 flex flex-col justify-center">
+      <section className="relative min-h-screen px-6 py-32 md:px-24 flex flex-col justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
           <div className="space-y-16">
-            <h2 className="editorial-heading reveal-text uppercase text-white">
+            <motion.h2 
+              className="editorial-heading uppercase text-white"
+              initial={{ y: 100, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            >
               WE AREN&apos;T <br /> FOR EVERYONE.
-            </h2>
+            </motion.h2>
             <div className="space-y-8 max-w-md">
                <p className="text-white/40 leading-relaxed uppercase text-[10px] tracking-[0.4em]">
                  The underground is not a place, it is a state of mind. We create artifacts for those who live in the shadows.
@@ -193,13 +174,16 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="relative aspect-[4/5] overflow-hidden grayscale glass p-4 cinematic-shadow">
+          <motion.div 
+            className="relative aspect-[4/5] overflow-hidden grayscale glass p-4 cinematic-shadow"
+            style={{ y: parallaxY }}
+          >
             <div className="relative h-full w-full overflow-hidden">
                <Image
                 src="https://images.unsplash.com/photo-1618354691792-d1d42acfd860?q=80&w=1000"
                 alt="Model"
                 fill
-                className="object-cover parallax-image scale-110"
+                className="object-cover scale-110"
               />
             </div>
             <div className="absolute top-8 right-8 mix-blend-difference">
@@ -211,7 +195,15 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-zinc-100 text-black">
-        <h2 className="text-huge text-center reveal-text">ENTER THE VOID</h2>
+        <motion.h2 
+          className="text-huge text-center"
+          initial={{ y: 100, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          ENTER THE VOID
+        </motion.h2>
         <Link
           href="/shop"
           className="mt-16 group relative overflow-hidden bg-black text-white px-16 py-6"

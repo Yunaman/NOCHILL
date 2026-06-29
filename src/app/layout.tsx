@@ -5,7 +5,14 @@ import { AppWrapper } from "@/components/layout/AppWrapper";
 
 export const metadata: Metadata = {
   title: "NOCHILL | BUILT FOR THE OUTSIDERS",
-  description: "Cinematic underground luxury streetwear aesthetic.",
+  description: "Cinematic underground luxury streetwear aesthetic. Premium fashion archive from Addis Ababa.",
+  keywords: ["luxury streetwear", "fashion", "underground", "NOCHILL", "Addis Ababa", "premium clothing"],
+  authors: [{ name: "NOCHILL" }],
+  openGraph: {
+    title: "NOCHILL | BUILT FOR THE OUTSIDERS",
+    description: "Cinematic underground luxury streetwear aesthetic.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -19,8 +26,16 @@ export default function RootLayout({
       className={`${fontDisplay.variable} ${fontMono.variable} ${fontBody.variable}`}
     >
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="nc-skip-link"
+        >
+          Skip to main content
+        </a>
         <AppWrapper>
-          {children}
+          <main id="main-content">
+            {children}
+          </main>
         </AppWrapper>
       </body>
     </html>
